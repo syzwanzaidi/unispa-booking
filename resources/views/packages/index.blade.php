@@ -2,50 +2,39 @@
 
 @section('content')
 <div class="container mt-5">
-    <h1 class="text-center mb-4">UNI-SPA SERVICES</h1>
-    <h2 class="text-center mb-5">Indulge in Relaxation and Rejuvenation</h2>
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-    <div class="row">
-        @php
-            $groupedPackages = $packages->groupBy('package_name');
-        @endphp
+    <h1 class="mb-4">Our Packages</h1>
 
-        @foreach ($groupedPackages as $packageName => $items)
-        <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-header bg-dark text-white">
-                    <h4 class="mb-0">{{ $packageName }}</h4>
-                </div>
-                <ul class="list-group list-group-flush">
-                    @foreach ($items as $package)
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>{{ $package->package_desc }}</strong>
-                            {{ $package->duration !== 'N/A' ? ' - ' . $package->duration : '' }}
+    @if ($categorizedPackages->isEmpty())
+        <div class="alert alert-info">
+            No packages available at the moment.
+        </div>
+    @else
+        @foreach ($categorizedPackages as $category => $packages)
+            <h2 class="mt-4 mb-3">{{ $category }}</h2>
+            <div class="row">
+                @foreach ($packages as $package)
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $package->package_name }}</h5>
+                                <p class="card-text">{{ $package->package_desc }}</p>
+                                <p class="card-text"><strong>Price:</strong> RM {{ number_format($package->package_price, 2) }}</p>
+                                @if ($package->duration != 'N/A')
+                                    <p class="card-text"><strong>Duration:</strong> {{ $package->duration }}</p>
+                                @endif
+                                <p class="card-text"><small class="text-muted">Max Capacity: {{ $package->capacity }}</small></p>
+                                @auth
+                                    <a href="{{ route('bookings.create', ['package_id' => $package->package_id]) }}" class="btn btn-sm btn-primary ms-2">Book Now</a>
+                                @else
+                                    <a href="{{ route('login') }}" class="btn btn-sm btn-outline-secondary ms-2">Login to Book</a>
+                                @endauth
+                            </div>
                         </div>
-                        <div>
-                            RM {{ number_format($package->package_price, 2) }}
-                            @auth
-                                <a href="{{ route('bookings.create', ['package_id' => $package->package_id]) }}" class="btn btn-sm btn-primary ms-2">Book Now</a>
-                            @else
-                                <a href="{{ route('login') }}" class="btn btn-sm btn-outline-secondary ms-2">Login to Book</a>
-                            @endauth
-                        </div>
-                    </li>
-                    @endforeach
-                </ul>
+                    </div>
+                @endforeach
             </div>
-        </div>
+            <hr>
         @endforeach
-    </div>
-
-    <div class="text-center mt-5">
-        <p class="fs-4">10% Discount for UITM Members</p>
-    </div>
-
+    @endif
 </div>
 @endsection

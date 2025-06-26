@@ -9,8 +9,9 @@ class PackageController extends Controller
 {
     public function index()
     {
-        $packages = Package::all(); // Fetch all packages
-        return view('packages.index', compact('packages')); // Display them in a view
+        $categorizedPackages = Package::all()->groupBy('category');
+
+        return view('packages.index', compact('categorizedPackages'));
     }
     public function create()
     {
