@@ -6,49 +6,36 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    // --- Login Methods ---
+    protected $redirectTo = '/';
 
     public function showLoginForm()
     {
-        // If user is already logged in, redirect them away from login page
-        if (Auth::check()) {
-            return redirect()->route('dashboard'); // Or your intended home page
-        }
-        return view('auth.login'); // Create this Blade view
+        return view('auth.login');
     }
 
     public function login(Request $request)
     {
-        $request->validate([
+        $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials, $request->filled('remember'))) { // 'remember' is for "remember me" functionality
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard'); // Redirect to intended URL or /dashboard
+            return redirect()->intended($this->redirectTo);
         }
 
-        throw ValidationException::withMessages([
-            'email' => [trans('auth.failed')], // Laravel's default failed authentication message
-        ]);
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
-
-    // --- Registration Methods ---
 
     public function showRegistrationForm()
     {
-        // If user is already logged in, redirect them away from register page
-        if (Auth::check()) {
-            return redirect()->route('dashboard');
-        }
-        return view('auth.register'); // Create this Blade view
+        return view('auth.register');
     }
 
     public function register(Request $request)
@@ -56,35 +43,31 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed', // 'confirmed' means it needs 'password_confirmation' field
-            'gender' => 'nullable|string|in:Male,Female,Other', // Validation for ERD field
-            'phone_no' => 'nullable|string|max:20', // Validation for ERD field
-            'is_member' => 'nullable|boolean', // Validation for ERD field
+            'password' => 'required|string|min:8|confirmed',
+            'gender' => 'required|string|in:Male,Female',
+            'phone_no' => 'nullable|string|max:20',
+            'is_member' => 'boolean',
         ]);
 
-        $user = User::create([
+        User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->password, // The User model's setPasswordAttribute will hash this
+            'password' => Hash::make($request->password),
             'gender' => $request->gender,
             'phone_no' => $request->phone_no,
-            'is_member' => $request->has('is_member'), // Checkbox handling
+            'is_member' => $request->boolean('is_member'),
         ]);
 
-        Auth::login($user); // Log the user in immediately after registration
-
-        return redirect()->route('dashboard'); // Redirect to dashboard after successful registration
+        return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
     }
-
-    // --- Logout Method ---
 
     public function logout(Request $request)
     {
-        Auth::logout(); // Logout the user
+        Auth::logout();
 
-        $request->session()->invalidate(); // Invalidate the current session
-        $request->session()->regenerateToken(); // Regenerate the CSRF token
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-        return redirect('/login'); // Redirect to login page after logout
+        return redirect()->route('login');
     }
 }

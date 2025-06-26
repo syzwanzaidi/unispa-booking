@@ -4,7 +4,6 @@
 <div class="container mt-4">
     <div class="card p-4">
         <h1 class="mb-3">Welcome, {{ $user->name }}!</h1>
-        <p>Your User ID: {{ $user->user_id }}</p>
         <p>Your Email: {{ $user->email }}</p>
         <p>Gender: {{ $user->gender ?? 'N/A' }}</p>
         <p>Phone Number: {{ $user->phone_no ?? 'N/A' }}</p>

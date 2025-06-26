@@ -16,37 +16,56 @@ class BookingController extends Controller
     }
     public function index()
     {
-        if (Auth::check()) {
-            $bookings = Auth::user()->bookings;
-        } else {
-            $bookings = Booking::all(); // For admin view, show all bookings
-        }
+        $bookings = Booking::where('user_id', Auth::id())
+                            ->with('package')
+                            ->orderBy('booking_date', 'desc')
+                            ->orderBy('booking_time', 'desc')
+                            ->get();
+
         return view('bookings.index', compact('bookings'));
     }
-    public function create()
+    public function create(Request $request)
     {
         $users = User::all();
         $packages = Package::all();
-        return view('bookings.create', compact('users', 'packages'));
+        $selectedPackageId = $request->query('package_id');
+
+        return view('bookings.create', compact('users', 'packages', 'selectedPackageId'));
     }
     public function store(Request $request)
     {
         $request->validate([
-            'booking_pax' => 'required|integer|min:1',
-            'booking_time' => 'required|date_format:H:i',
-            'booking_date' => 'required|date|after_or_equal:today',
-            'payment_method' => 'required|string|max:50',
             'package_id' => 'required|exists:packages,package_id',
-            'user_id' => 'required|exists:users,user_id',
+            'booking_pax' => 'required|integer|min:1',
+            'booking_date' => 'required|date|after_or_equal:today',
+            'booking_time' => 'required|date_format:H:i',
+            'payment_method' => 'required|string',
         ]);
 
+        $package = Package::find($request->package_id);
+        if (!$package) {
+            return back()->with('error', 'Selected package not found.')->withInput();
+        }
+
+        $bookedPax = Booking::where('package_id', $package->package_id)
+            ->where('booking_date', $request->booking_date)
+            ->where('booking_time', $request->booking_time)
+            ->sum('booking_pax');
+
+        $remainingCapacity = $package->capacity - $bookedPax;
+
+        if ($request->booking_pax > $remainingCapacity) {
+            return back()->with('error', 'Sorry, there are only ' . $remainingCapacity . ' slots remaining for this package at the selected time. Please choose a different time or reduce your booking quantity.')->withInput();
+        }
+
         Booking::create([
-            'booking_pax' => $request->booking_pax,
-            'booking_time' => $request->booking_time,
-            'booking_date' => $request->booking_date,
-            'payment_method' => $request->payment_method,
+            'user_id' => Auth::id(),
             'package_id' => $request->package_id,
-            'user_id' => $request->user_id ?? Auth::id(),
+            'booking_date' => $request->booking_date,
+            'booking_time' => $request->booking_time,
+            'booking_status' => 'Pending',
+            'booking_pax' => $request->booking_pax,
+            'payment_method' => $request->payment_method,
         ]);
 
         return redirect()->route('bookings.index')->with('success', 'Booking created successfully!');

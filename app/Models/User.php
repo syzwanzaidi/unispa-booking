@@ -10,9 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
-    protected $primaryKey = 'user_id';
-    public $incrementing = true;
-    protected $keyType = 'int';
     protected $fillable = [
         'name',
         'email',
@@ -26,12 +23,11 @@ class User extends Authenticatable
         'remember_token',
     ];
     protected $casts = [
-        'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_member' => 'boolean',
     ];
     public function bookings(): HasMany
     {
-        return $this->hasMany(Booking::class, 'user_id', 'user_id');
+        return $this->hasMany(Booking::class, 'user_id', 'id');
     }
 }
