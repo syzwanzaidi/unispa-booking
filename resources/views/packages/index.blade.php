@@ -9,25 +9,37 @@
             No packages available at the moment.
         </div>
     @else
-        @foreach ($categorizedPackages as $category => $packages)
+        @foreach ($categorizedPackages as $category => $packageGroups)
             <h2 class="mt-4 mb-3">{{ $category }}</h2>
             <div class="row">
-                @foreach ($packages as $package)
+                @foreach ($packageGroups as $packageGroup)
                     <div class="col-md-4 mb-4">
                         <div class="card h-100">
                             <div class="card-body">
-                                <h5 class="card-title">{{ $package->package_name }}</h5>
-                                <p class="card-text">{{ $package->package_desc }}</p>
-                                <p class="card-text"><strong>Price:</strong> RM {{ number_format($package->package_price, 2) }}</p>
-                                @if ($package->duration != 'N/A')
-                                    <p class="card-text"><strong>Duration:</strong> {{ $package->duration }}</p>
+                                <h5 class="card-title">{{ $packageGroup->package_name }}</h5>
+                                @if ($packageGroup->package_desc)
+                                    <p class="card-text">{{ $packageGroup->package_desc }}</p>
                                 @endif
-                                <p class="card-text"><small class="text-muted">Max Capacity: {{ $package->capacity }}</small></p>
-                                @auth
-                                    <a href="{{ route('bookings.create', ['package_id' => $package->package_id]) }}" class="btn btn-sm btn-primary ms-2">Book Now</a>
-                                @else
-                                    <a href="{{ route('login') }}" class="btn btn-sm btn-outline-secondary ms-2">Login to Book</a>
-                                @endauth
+                                <p class="card-text mt-3"><strong>Available Options:</strong></p>
+                                <ul class="list-group list-group-flush mb-3">
+                                    @foreach ($packageGroup->options as $option)
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                @if ($option->duration && $option->duration != 'N/A')
+                                                    {{ $option->duration }} -
+                                                @endif
+                                                RM {{ number_format($option->package_price, 2) }}
+                                                <br><small class="text-muted">Capacity: {{ $option->capacity }}</small>
+                                            </div>
+                                            @auth {{-- If the user IS logged in --}}
+                                                <a href="{{ route('bookings.create', ['package_id' => $option->package_id]) }}" class="btn btn-sm btn-primary">Book Now</a>
+                                            @else {{-- If the user is NOT logged in --}}
+                                                <a href="{{ route('login') }}" class="btn btn-sm btn-outline-primary">Login to Book</a>
+                                            @endauth
+                                        </li>
+                                    @endforeach
+                                </ul>
+
                             </div>
                         </div>
                     </div>
