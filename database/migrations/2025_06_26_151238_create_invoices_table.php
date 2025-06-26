@@ -8,11 +8,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('invoices', function (Blueprint $table) {
-            $table->increments('invoice_id'); // Primary Key (PK)
+            $table->increments('invoice_id');
             $table->decimal('total_price', 10, 2);
-            $table->timestamp('generated_at')->useCurrent(); // Sets default to current timestamp
+            $table->timestamp('generated_at')->useCurrent();
 
-            // Foreign Key (FK)
             $table->integer('booking_id')->unsigned();
             $table->foreign('booking_id')->references('booking_id')->on('bookings')->onDelete('cascade');
             // $table->timestamps();

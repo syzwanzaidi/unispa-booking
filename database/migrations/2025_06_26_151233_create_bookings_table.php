@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bookings', function (Blueprint $table) {
-            $table->increments('booking_id'); // Primary Key (PK)
+            $table->increments('booking_id');
             $table->integer('booking_pax');
             $table->dateTime('booking_time');
             $table->date('booking_date');
