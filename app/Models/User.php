@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
-
     protected $primaryKey = 'user_id';
     public $incrementing = true;
     protected $keyType = 'int';
@@ -27,12 +26,12 @@ class User extends Authenticatable
         'remember_token',
     ];
     protected $casts = [
-        'is_member' => 'boolean',
-        // 'email_verified_at' =>
+        'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_member' => 'boolean',
     ];
-    public function setPasswordAttribute($value)
+    public function bookings(): HasMany
     {
-        $this->attributes['password'] = Hash::make($value);
+        return $this->hasMany(Booking::class, 'user_id', 'user_id');
     }
 }
