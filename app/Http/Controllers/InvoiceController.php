@@ -1,67 +1,44 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\Invoice;
 use App\Models\Booking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class InvoiceController extends Controller
 {
-    public function __construct()
+    public function __construct() { $this->middleware('auth'); }
+    public function show($bookingId)
     {
-        $this->middleware('auth');
-    }
-    public function index()
-    {
-        $invoices = Invoice::all();
-        return view('invoices.index', compact('invoices'));
-    }
-    public function create()
-    {
-        $bookings = Booking::all();
-        return view('invoices.create', compact('bookings'));
-    }
-    public function store(Request $request)
-    {
-        $request->validate([
-            'booking_id' => 'required|exists:bookings,booking_id|unique:invoices,booking_id',
-            'total_price' => 'required|numeric|min:0',
-        ]);
+        $booking = Booking::with('user', 'bookingItems.package')->find($bookingId);
+        if (!$booking) { return redirect()->route('bookings.index')->with('error', 'Booking not found.'); }
+        if ($booking->user_id !== Auth::id()) { abort(403, 'Unauthorized action.'); }
+        $invoice = $booking->invoice;
 
-        Invoice::create([
-            'booking_id' => $request->booking_id,
-            'total_price' => $request->total_price,
-        ]);
+        if (!$invoice) {
+            try {
+                $invoiceNumber = 'INV-' . Carbon::now()->format('Ymd') . '-' . str_pad($booking->booking_id, 5, '0', STR_PAD_LEFT);
+                $initialPaymentStatus = 'Pending';
+                if ($booking->payment_method === 'Online' && $booking->booking_status === 'Confirmed') {
+                    $initialPaymentStatus = 'Paid';
+                }
 
-        return redirect()->route('invoices.index')->with('success', 'Invoice generated successfully!');
-    }
-    public function show(Invoice $invoice)
-    {
-        return view('invoices.show', compact('invoice'));
-    }
-    public function edit(Invoice $invoice)
-    {
-        $bookings = Booking::all();
-        return view('invoices.edit', compact('invoice', 'bookings'));
-    }
-    public function update(Request $request, Invoice $invoice)
-    {
-        $request->validate([
-            'booking_id' => 'required|exists:bookings,booking_id|unique:invoices,booking_id,' . $invoice->invoice_id . ',invoice_id',
-            'total_price' => 'required|numeric|min:0',
-        ]);
+                $invoice = Invoice::create([
+                    'booking_id' => $booking->booking_id,
+                    'invoice_number' => $invoiceNumber,
+                    'total_price' => $booking->total_amount,
+                    'generated_at' => now(),
+                    'payment_status' => $initialPaymentStatus,
+                ]);
+                Log::info("New invoice generated: " . $invoice->invoice_number . " for Booking ID: " . $booking->booking_id);
 
-        $invoice->update([
-            'booking_id' => $request->booking_id,
-            'total_price' => $request->total_price,
-        ]);
-
-        return redirect()->route('invoices.index')->with('success', 'Invoice updated successfully!');
-    }
-    public function destroy(Invoice $invoice)
-    {
-        $invoice->delete();
-        return redirect()->route('invoices.index')->with('success', 'Invoice deleted successfully!');
+            } catch (\Exception $e) {
+                Log::error("Failed to generate invoice for Booking ID {$booking->booking_id}: " . $e->getMessage());
+                return back()->with('error', 'Failed to generate invoice. Please try again.');
+            }
+        }
+        return view('invoices.show', compact('invoice', 'booking'));
     }
 }

@@ -59,7 +59,7 @@
 
     <div class="mt-4">
         <a href="{{ route('bookings.index') }}" class="btn btn-secondary">Back to My Bookings</a>
-        @if ($booking->booking_status !== 'Cancelled' && $booking->booking_status !== 'Completed' && \Carbon\Carbon::parse($booking->booking_date)->isFuture() || \Carbon\Carbon::parse($booking->booking_date)->isToday())
+        @if ($booking->booking_status !== 'Cancelled' && $booking->booking_status !== 'Completed' && (\Carbon\Carbon::parse($booking->booking_date)->isFuture() || \Carbon\Carbon::parse($booking->booking_date)->isToday()))
             <form action="{{ route('bookings.cancel', $booking->booking_id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this booking? This action cannot be undone.');">
                 @csrf
                 <button type="submit" class="btn btn-danger">Cancel Booking</button>
@@ -67,6 +67,7 @@
         @else
             <button type="button" class="btn btn-warning" disabled>Cannot Cancel ({{ $booking->booking_status }})</button>
         @endif
+        <a href="{{ route('invoices.show', $booking->booking_id) }}" class="btn btn-info ms-2">View Invoice</a>
     </div>
 </div>
 @endsection

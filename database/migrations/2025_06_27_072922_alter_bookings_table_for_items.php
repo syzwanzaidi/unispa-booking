@@ -19,7 +19,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('bookings', function (Blueprint $table) {
-            $table->unsignedBigInteger('package_id')->after('user_id');
+            $table->unsignedInteger('package_id')->after('user_id');
+
             $table->integer('booking_pax')->after('package_id');
             $table->time('booking_time')->after('booking_date');
             $table->foreign('package_id')->references('package_id')->on('packages')->onDelete('cascade');
