@@ -161,3 +161,7 @@
     font-weight:600
   }
 }
+.login-form-card {
+        max-width: 500px;
+        margin: 50px auto;
+    }

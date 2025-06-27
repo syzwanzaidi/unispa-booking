@@ -10,23 +10,48 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
 
+// Home Page
 Route::get('/', function () {
     return view('index');
 })->name('home');
 
+// Unified Login/Register routes handled by AuthController
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
+
+// Public Packages viewing
 Route::resource('packages', PackageController::class)->only(['index', 'show']);
 
-Route::middleware('auth')->group(function () {
+// This ensures the logout route is accessible to both regular users and admins
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware('auth:web')->group(function () { // Apply 'web' guard for this group
+    // User Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Packages management (if users can manage, otherwise move to admin group)
     Route::resource('packages', PackageController::class)->except(['index', 'show']);
+
+    // Booking management by regular users
     Route::resource('bookings', BookingController::class);
     Route::post('bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
-    Route::resource('invoices', InvoiceController::class);
+
+    // User viewing their own invoices
+    Route::resource('invoices', InvoiceController::class)->only(['show']);
+
+    // User managing their payments
     Route::resource('payments', PaymentController::class);
-    Route::resource('admins', AdminController::class);
+});
+Route::prefix('admin')->name('admin.')->group(function () {
+
+    // Admin-specific routes protected by the 'admin' guard
+    Route::middleware(['auth:admin'])->group(function () {
+        Route::get('dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+        Route::resource('admins', AdminController::class);
+    });
+
 });

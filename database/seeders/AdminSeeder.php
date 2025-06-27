@@ -12,12 +12,12 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         Admin::firstOrCreate(
-            ['admin_username' => 'unispadmin'],
+            ['admin_username' => 'admin'],
             [
-                'admin_password' => Hash::make('AdminUniSPA!23'),
+                'admin_password' => Hash::make('admin123'),
             ]
         );
 
-        $this->command->info('Admin account "unispadmin" created!');
+        $this->command->info('Admin account "admin" created!');
     }
 }

@@ -6,47 +6,60 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    protected $redirectTo = '/';
-
     public function showLoginForm()
     {
+        // If a user (web guard) is logged in, redirect to user dashboard
+        if (Auth::guard('web')->check()) {
+            return redirect()->route('dashboard');
+        }
+        // If an admin (admin guard) is logged in, redirect to admin dashboard
+        if (Auth::guard('admin')->check()) {
+            return redirect()->route('admin.dashboard');
+        }
         return view('auth.login');
     }
-
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+        // Validate common credentials (identifier and password)
+        $request->validate([
+            'identifier' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        $identifier = $request->input('identifier');
+        $password = $request->input('password');
+        $remember = $request->boolean('remember');
+        if (Auth::guard('web')->attempt(['email' => $identifier, 'password' => $password], $remember)) {
             $request->session()->regenerate();
-            return redirect()->intended($this->redirectTo);
+            return redirect()->intended(route('dashboard'));
         }
-
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+        if (Auth::guard('admin')->attempt(['admin_username' => $identifier, 'password' => $password], $remember)) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('admin.dashboard')); // Redirect to admin dashboard
+        }
+        throw ValidationException::withMessages([
+            'identifier' => [trans('auth.failed')],
+        ]);
     }
-
     public function showRegistrationForm()
     {
+        if (Auth::guard('web')->check() || Auth::guard('admin')->check()) {
+            return redirect()->route('home');
+        }
         return view('auth.register');
     }
-
     public function register(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'gender' => 'required|string|in:Male,Female',
+            'gender' => 'nullable|string',
             'phone_no' => 'nullable|string|max:20',
-            'is_member' => 'boolean',
         ]);
 
         User::create([
@@ -55,19 +68,25 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'gender' => $request->gender,
             'phone_no' => $request->phone_no,
-            'is_member' => $request->boolean('is_member'),
         ]);
 
-        return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
+        return redirect()->route('login')->with('success', 'Registration successful! Please login.');
     }
-
     public function logout(Request $request)
     {
-        Auth::logout();
+        if (Auth::guard('web')->check()) {
+            Auth::guard('web')->logout();
+            $redirectRoute = route('login');
+        } elseif (Auth::guard('admin')->check()) {
+            Auth::guard('admin')->logout();
+            $redirectRoute = route('login');
+        } else {
+            $redirectRoute = route('login');
+        }
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->to($redirectRoute);
     }
 }
