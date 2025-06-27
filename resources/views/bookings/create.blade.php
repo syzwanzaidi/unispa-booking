@@ -3,10 +3,19 @@
 @section('content')
 <div class="container mt-5">
     <h1 class="mb-4">Create New Booking</h1>
-
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     @if ($errors->any())
         <div class="alert alert-danger">
-            <ul class="mb-0">
+            <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -14,55 +23,106 @@
         </div>
     @endif
 
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <form method="POST" action="{{ route('bookings.store') }}">
+    <form action="{{ route('bookings.store') }}" method="POST" id="bookingForm">
         @csrf
+        <div class="card mb-4">
+            <div class="card-header">Overall Booking Information</div>
+            <div class="card-body">
+                <div class="form-group mb-3">
+                    <label for="booking_date">Booking Date</label>
+                    <input type="date" class="form-control" id="booking_date" name="booking_date"
+                           value="{{ old('booking_date', \Carbon\Carbon::today()->format('Y-m-d')) }}"
+                           min="{{ \Carbon\Carbon::today()->format('Y-m-d') }}" required>
+                    @error('booking_date')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
 
-        <div class="mb-3">
-            <label for="package_id" class="form-label">Select Package</label>
-            <select class="form-select" id="package_id" name="package_id" required>
-                <option value="">-- Choose a Package --</option>
-                @foreach ($packages as $package)
-                    <option value="{{ $package->package_id }}"
-                        {{ old('package_id', $selectedPackageId) == $package->package_id ? 'selected' : '' }}
-                        data-capacity="{{ $package->capacity }}">
-                        {{ $package->package_name }} - {{ $package->package_desc }} (RM {{ number_format($package->package_price, 2) }})
-                    </option>
-                @endforeach
-            </select>
+                <div class="form-group mb-3">
+                    <label for="payment_method">Payment Method</label>
+                    <select class="form-control" id="payment_method" name="payment_method" required>
+                        <option value="">Select payment method</option>
+                        <option value="Cash" {{ old('payment_method') == 'Cash' ? 'selected' : '' }}>Cash</option>
+                        <option value="Card" {{ old('payment_method') == 'Card' ? 'selected' : '' }}>Card</option>
+                        <option value="Online Banking" {{ old('payment_method') == 'Online Banking' ? 'selected' : '' }}>Online Banking</option>
+
+                    </select>
+                    @error('payment_method')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="notes">Notes (Optional)</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="3">{{ old('notes') }}</textarea>
+                    @error('notes')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+        </div>
+        <div id="packageItemsContainer">
+            <div class="card mb-3 package-item-template">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    Package Item <span class="item-number">1</span>
+                    <button type="button" class="btn btn-danger btn-sm remove-item" style="display:none;">Remove</button>
+                </div>
+                <div class="card-body">
+                    <div class="form-group mb-3">
+                        <label>Select Package</label>
+                        <select class="form-control package-select" name="items[0][package_id]" required>
+                            <option value="">Choose a package</option>
+                            @foreach ($packages as $package)
+                                <option value="{{ $package->package_id }}"
+                                        data-duration="{{ $package->duration }}"
+                                        data-price="{{ $package->package_price }}"
+                                        {{ (old('items.0.package_id') == $package->package_id || (!old('items') && $selectedPackageId == $package->package_id)) ? 'selected' : '' }}>
+                                    {{ $package->package_name }} ({{ $package->package_desc }}) - RM{{ number_format($package->package_price, 2) }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('items.0.package_id') <div class="text-danger">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>Number of People (Pax)</label>
+                        <input type="number" class="form-control pax-input" name="items[0][item_pax]" value="1" min="1" required>
+                        @error('items.0.item_pax') <div class="text-danger">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>Time Slot</label>
+                        <select class="form-control time-slot-select" name="items[0][item_start_time]" required>
+                            <option value="">Select a time slot</option>
+                            @foreach ($timeSlots as $slot)
+                                <option value="{{ $slot }}">
+                                    {{ \Carbon\Carbon::parse($slot)->format('h:i A') }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('items.0.item_start_time') <div class="text-danger">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>For Whom (Name, optional)</label>
+                        <input type="text" class="form-control for-whom-input" name="items[0][for_whom_name]" placeholder="e.g., John Doe (leave empty for self)">
+                        @error('items.0.for_whom_name') <div class="text-danger">{{ $message }}</div> @enderror
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="booking_pax" class="form-label">Number of Pax</label>
-            <input type="number" class="form-control" id="booking_pax" name="booking_pax" value="{{ old('booking_pax') }}" min="1" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="booking_date" class="form-label">Booking Date</label>
-            <input type="date" class="form-control" id="booking_date" name="booking_date" value="{{ old('booking_date', date('Y-m-d')) }}" min="{{ date('Y-m-d') }}" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="booking_time" class="form-label">Booking Time</label>
-            <input type="time" class="form-control" id="booking_time" name="booking_time" value="{{ old('booking_time') }}" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="payment_method" class="form-label">Payment Method</label>
-            <select class="form-select" id="payment_method" name="payment_method" required>
-                <option value="">-- Select Payment Method --</option>
-                <option value="Online Banking" {{ old('payment_method') == 'Online Banking' ? 'selected' : '' }}>Online Banking</option>
-                <option value="Credit Card" {{ old('payment_method') == 'Credit Card' ? 'selected' : '' }}>Credit Card</option>
-                <option value="Cash" {{ old('payment_method') == 'Cash' ? 'selected' : '' }}>Cash (at Spa)</option>
-            </select>
-        </div>
+        <button type="button" class="btn btn-secondary mb-4" id="addPackageItem">Add Another Package</button>
 
         <button type="submit" class="btn btn-primary">Submit Booking</button>
+        <a href="{{ url()->previous() }}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
+<script>
+    window.oldBookingItems = @json(old('items') ?? []);
+    window.allPackages = @json($packages);
+    window.allTimeSlots = @json($timeSlots);
+    window.selectedInitialPackageId = @json($selectedPackageId);
+</script>
+
 @endsection

@@ -12,8 +12,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('/') }}">Home</a>
                         </li>
-
-                        {{-- !!! ADD THIS LINK FOR PACKAGES !!! --}}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('packages.index') }}">Our Services</a>
                         </li>
