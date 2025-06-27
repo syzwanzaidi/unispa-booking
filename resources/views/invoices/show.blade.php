@@ -12,10 +12,11 @@
                 {{-- <img src="" alt="UniSPA Logo" style="max-height: 80px;"> --}}
                 <h4 class="mb-0">UniSPA Booking System</h4>
                 <address class="mb-0">
-                    123 Spa Street<br>
-                    Seri Kembangan, Selangor, Malaysia<br>
+                    Tingkat 3 UNISPA, Universiti Teknologi MARA (UiTM) Shah Alam,<br>
+                    UiTM-MTDC Technopreneur Centre, 40450 Shah Alam,<br>
+                    Selangor, Malaysia<br>
                     Email: contact@unispabooking.com<br>
-                    Phone: +60 12-345 6789
+                    Phone: 011-1303 7796
                 </address>
             </div>
         </div>
