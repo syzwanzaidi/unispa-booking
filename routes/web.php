@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::resource('packages', PackageController::class)->except(['index', 'show']);
     Route::resource('bookings', BookingController::class);
+    Route::post('bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
     Route::resource('invoices', InvoiceController::class);
     Route::resource('payments', PaymentController::class);
     Route::resource('admins', AdminController::class);

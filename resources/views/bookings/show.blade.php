@@ -4,6 +4,17 @@
 <div class="container mt-5">
     <h1 class="mb-4">Booking Details (ID: {{ $booking->booking_id }})</h1>
 
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="card mb-4">
         <div class="card-header">Overall Booking Information</div>
         <div class="card-body">
@@ -46,6 +57,16 @@
         </div>
     </div>
 
-    <a href="{{ route('bookings.index') }}" class="btn btn-secondary">Back to My Bookings</a>
+    <div class="mt-4">
+        <a href="{{ route('bookings.index') }}" class="btn btn-secondary">Back to My Bookings</a>
+        @if ($booking->booking_status !== 'Cancelled' && $booking->booking_status !== 'Completed' && \Carbon\Carbon::parse($booking->booking_date)->isFuture() || \Carbon\Carbon::parse($booking->booking_date)->isToday())
+            <form action="{{ route('bookings.cancel', $booking->booking_id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this booking? This action cannot be undone.');">
+                @csrf
+                <button type="submit" class="btn btn-danger">Cancel Booking</button>
+            </form>
+        @else
+            <button type="button" class="btn btn-warning" disabled>Cannot Cancel ({{ $booking->booking_status }})</button>
+        @endif
+    </div>
 </div>
 @endsection

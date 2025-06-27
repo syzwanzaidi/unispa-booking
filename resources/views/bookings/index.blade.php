@@ -9,6 +9,11 @@
             {{ session('success') }}
         </div>
     @endif
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
 
     @if ($bookings->isEmpty())
         <div class="alert alert-info">
@@ -44,7 +49,7 @@
                                 @endforeach
                             </td>
                             <td>
-                                <a href="{{ route('bookings.show', $booking->booking_id) }}" class="btn btn-info btn-sm">View</a>
+                                <a href="{{ route('bookings.show', $booking->booking_id) }}" class="btn btn-info btn-sm">View Details</a>
                             </td>
                         </tr>
                     @endforeach
