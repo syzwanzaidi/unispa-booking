@@ -31,11 +31,12 @@
                                                 RM {{ number_format($option->package_price, 2) }}
                                                 <br><small class="text-muted">Capacity: {{ $option->capacity }}</small>
                                             </div>
-                                            @auth {{-- If the user IS logged in --}}
+                                            @if (Auth::guard('web')->check())
                                                 <a href="{{ route('bookings.create', ['package_id' => $option->package_id]) }}" class="btn btn-sm btn-primary">Book Now</a>
-                                            @else {{-- If the user is NOT logged in --}}
+                                            @elseif (Auth::guard('admin')->check())
+                                            @else
                                                 <a href="{{ route('login') }}" class="btn btn-sm btn-outline-primary">Login to Book</a>
-                                            @endauth
+                                            @endif
                                         </li>
                                     @endforeach
                                 </ul>

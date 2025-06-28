@@ -19,14 +19,11 @@
 
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="{{ url('/') }}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::is('packages*') ? 'active' : '' }}" href="{{ route('packages.index') }}">Our Services</a>
-                        </li>
                         @if (Auth::guard('admin')->check())
                             {{-- ADMIN Navigation Items --}}
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::is('packages*') ? 'active' : '' }}" href="{{ route('packages.index') }}">Our Services</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ Request::is('admin/dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Admin Dashboard</a>
                             </li>
@@ -54,6 +51,12 @@
                         @elseif (Auth::guard('web')->check())
                             {{-- REGULAR USER Navigation Items --}}
                             <li class="nav-item">
+                                <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="{{ url('/') }}">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::is('packages*') ? 'active' : '' }}" href="{{ route('packages.index') }}">Our Services</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">My Dashboard</a>
                             </li>
                             <li class="nav-item">
@@ -76,6 +79,12 @@
 
                         @else
                             {{-- GUEST Navigation Items --}}
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="{{ url('/') }}">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::is('packages*') ? 'active' : '' }}" href="{{ route('packages.index') }}">Our Services</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ Request::is('login') ? 'active' : '' }}" href="{{ route('login') }}">Login</a>
                             </li>
