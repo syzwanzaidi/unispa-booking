@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\InvoiceController;
 
 class BookingController extends Controller
 {
@@ -141,6 +142,14 @@ class BookingController extends Controller
                     'item_price' => $package->package_price,
                     'for_whom_name' => $itemData['for_whom_name'],
                 ]);
+            }
+            $invoiceController = new InvoiceController();
+            $invoice = $invoiceController->generateInvoiceForBooking($booking->booking_id);
+
+            if (!$invoice) {
+                DB::rollBack();
+                Log::error("Invoice generation failed after successful booking creation for Booking ID: " . $booking->booking_id);
+                return back()->with('error', 'Booking created but failed to generate invoice. Please contact support.')->withInput();
             }
 
             DB::commit();

@@ -1,7 +1,7 @@
 @extends('layout.layout')
 
 @section('content')
-<div class="container mt-5 mb-5 print-area">
+<div class="container mt-5 mb-5">
     <div class="card p-4 shadow-sm">
         <div class="row mb-4">
             <div class="col-6">
@@ -26,14 +26,14 @@
         <div class="row mb-4">
             <div class="col-md-6">
                 <strong>Bill To:</strong><br>
-                <strong>{{ $booking->user->name }}</strong><br>
-                {{ $booking->user->email }}<br>
-                @if($booking->user->phone_no){{ $booking->user->phone_no }}@endif
+                <strong>{{ $invoice->booking->user->name }}</strong><br>
+                {{ $invoice->booking->user->email }}<br>
+                @if($invoice->booking->user->phone_no){{ $invoice->booking->user->phone_no }}@endif
             </div>
             <div class="col-md-6 text-end">
                 <strong>Invoice Date:</strong> {{ \Carbon\Carbon::parse($invoice->generated_at)->format('M d, Y') }}<br>
-                <strong>Booking Date:</strong> {{ \Carbon\Carbon::parse($booking->booking_date)->format('M d, Y') }}<br>
-                <strong>Payment Method:</strong> {{ $booking->payment_method }}<br>
+                <strong>Booking Date:</strong> {{ \Carbon\Carbon::parse($invoice->booking->booking_date)->format('M d, Y') }}<br>
+                <strong>Payment Method:</strong> {{ $invoice->booking->payment_method }}<br>
                 <strong>Payment Status:</strong>
                 <span class="badge {{ $invoice->payment_status === 'Paid' ? 'bg-success' : 'bg-warning text-dark' }}">
                     {{ $invoice->payment_status }}
@@ -56,7 +56,7 @@
                 </thead>
                 <tbody>
                     @php $itemNumber = 1; @endphp
-                    @foreach ($booking->bookingItems as $item)
+                    @foreach ($invoice->booking->bookingItems as $item)
                         <tr>
                             <td>{{ $itemNumber++ }}</td>
                             <td>
@@ -82,10 +82,10 @@
             </table>
         </div>
 
-        @if($booking->notes)
+        @if($invoice->booking->notes)
             <div class="mb-4">
                 <strong>Notes:</strong><br>
-                <p class="text-muted">{{ $booking->notes }}</p>
+                <p class="text-muted">{{ $invoice->booking->notes }}</p>
             </div>
         @endif
 
@@ -97,9 +97,7 @@
         </div>
 
         <div class="text-center mt-4">
-            <a href="{{ route('bookings.show', $booking->booking_id) }}" class="btn btn-secondary me-2">Back to Booking Details</a>
-            <button class="btn btn-primary" onclick="window.print()">Print Invoice</button>
-            {{-- <a href="{{ route('invoices.downloadPdf', $invoice->invoice_id) }}" class="btn btn-success ms-2">Download PDF</a> --}}
+            <a href="{{ route('admin.bookings.index') }}" class="btn btn-secondary me-2">Back to Bookings</a>
         </div>
     </div>
 </div>

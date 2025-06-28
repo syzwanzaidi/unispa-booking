@@ -37,7 +37,7 @@
                                 <a class="nav-link {{ Request::is('admin/packages*') ? 'active' : '' }}" href="{{ route('admin.packages.index') }}">Manage Packages</a> {{-- FIXED THIS LINE --}}
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ Request::is('admin/bookings*') ? 'active' : '' }}" href="#">View Bookings</a>
+                                <a class="nav-link {{ Request::is('admin/bookings*') ? 'active' : '' }}" href="{{ route('admin.bookings.index') }}">View Bookings</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ Request::is('admin/reports*') ? 'active' : '' }}" href="#">Reports</a>

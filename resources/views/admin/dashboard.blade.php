@@ -20,12 +20,58 @@
                         <div class="card-body">
                             <h5 class="card-title">Manage Spa Packages</h5>
                             <p class="card-text">Add, update, and delete spa packages offered.</p>
-                            <a href="{{ route('admin.packages.index') }}" class="btn btn-primary mb-2">Add/View Packages</a> {{-- UPDATED LINK --}}
+                            <a href="{{ route('admin.packages.index') }}" class="btn btn-primary mb-2">Add/View Packages</a>
                         </div>
                     </div>
                 </div>
 
-                {{-- ... (Other dashboard cards remain the same) ... --}}
+                {{-- Manage Customer Information --}}
+                <div class="col-md-4 mb-3">
+                    <div class="card bg-light h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Manage Customer Information</h5>
+                            <p class="card-text">View, add, update, and delete customer accounts.</p>
+                            <a href="#" class="btn btn-primary disabled mb-2" title="Implement link to customer list/creation">Add/View Customers</a>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Generate Reports --}}
+                <div class="col-md-4 mb-3">
+                    <div class="card bg-light h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Generate Reports</h5>
+                            <p class="card-text">Generate daily, monthly, and yearly operational reports.</p>
+                            <div class="d-flex flex-column">
+                                <a href="#" class="btn btn-info disabled mb-2" title="Implement link to daily report">Daily Report</a>
+                                <a href="#" class="btn btn-info disabled mb-2" title="Implement link to monthly report">Monthly Report</a>
+                                <a href="#" class="btn btn-info disabled" title="Implement link to yearly report">Yearly Report</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- View All Bookings --}}
+                <div class="col-md-4 mb-3">
+                    <div class="card bg-light h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">View All Bookings</h5>
+                            <p class="card-text">Oversee all customer bookings in the system and search.</p>
+                            <a href="{{ route('admin.bookings.index') }}" class="btn btn-primary">View Bookings</a>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- View All Invoices --}}
+                <div class="col-md-4 mb-3">
+                    <div class="card bg-light h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">View All Invoices</h5>
+                            <p class="card-text">Access and view all generated invoices.</p>
+                            <a href="{{ route('admin.invoices.index') }}" class="btn btn-primary">View Invoices</a>
+                        </div>
+                    </div>
+                </div>
 
             </div>
             <div class="mt-4 text-center">

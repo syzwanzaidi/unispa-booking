@@ -165,3 +165,97 @@
         max-width: 500px;
         margin: 50px auto;
     }
+@media print {
+    /* General body adjustments for print */
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact; /* For background colors/images */
+        print-color-adjust: exact;
+    }
+
+    /* Hide common non-invoice elements */
+    .site-footer,
+    .site-header, /* Assuming your header partial uses .site-header or similar */
+    .navbar,
+    .btn, /* Hide buttons */
+    .no-print { /* Use this class for anything specific you want to hide */
+        display: none !important;
+    }
+
+    /* Ensure invoice container and card are visible and take full width */
+    .container.print-area { /* Target the container you've marked */
+        width: 100% !important;
+        max-width: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .card {
+        border: 1px solid #ccc !important; /* Add border back if Bootstrap removes it for print */
+        box-shadow: none !important; /* Remove shadows for print */
+        margin: 0 !important;
+        padding: 20px !important; /* Ensure padding inside card */
+        width: 100% !important;
+    }
+
+    .table {
+        width: 100% !important;
+        margin-bottom: 1rem !important;
+        color: #212529 !important; /* Ensure dark text */
+        border-collapse: collapse !important;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.75rem !important;
+        vertical-align: top !important;
+        border-top: 1px solid #dee2e6 !important;
+    }
+
+    .table thead th {
+        vertical-align: bottom !important;
+        border-bottom: 2px solid #dee2e6 !important;
+    }
+
+    .table tbody + tbody {
+        border-top: 2px solid #dee2e6 !important;
+    }
+
+    .table-bordered th,
+    .table-bordered td {
+        border: 1px solid #dee2e6 !important;
+    }
+
+    /* Ensure text colors are black for readability */
+    h1, h2, h3, h4, h5, h6,
+    p, span, div, strong, small {
+        color: #000 !important;
+    }
+
+    /* Adjust badges for print */
+    .badge {
+        display: inline-block !important;
+        padding: 0.35em 0.65em !important;
+        font-size: 0.75em !important;
+        font-weight: 700 !important;
+        line-height: 1 !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+        vertical-align: baseline !important;
+        border-radius: 0.25rem !important;
+        background-color: #fff !important; /* Ensure no background for badge itself */
+        color: #000 !important; /* Default badge text color to black */
+        border: 1px solid #000; /* Add border to make it visible */
+    }
+    .badge.bg-success { border-color: #198754 !important; color: #198754 !important; }
+    .badge.bg-warning { border-color: #ffc107 !important; color: #ffc107 !important; }
+    .badge.bg-danger { border-color: #dc3545 !important; color: #dc3545 !important; }
+    .badge.bg-secondary { border-color: #6c757d !important; color: #6c757d !important; }
+
+    /* Ensure links don't show href */
+    a {
+        text-decoration: none !important;
+        color: #000 !important;
+    }
+}

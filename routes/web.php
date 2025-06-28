@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\Admin\AdminPackageController;
+use App\Http\Controllers\Admin\AdminBookingController;
+use App\Http\Controllers\Admin\AdminInvoiceController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InvoiceController;
@@ -40,7 +42,7 @@ Route::middleware('auth:web')->group(function () { // Apply 'web' guard for this
     Route::post('bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 
     // User viewing their own invoices
-    Route::resource('invoices', App\Http\Controllers\InvoiceController::class)->only(['index', 'show']);
+    Route::resource('invoices', InvoiceController::class)->only(['index', 'show']);
 
     // User managing their payments
     Route::resource('payments', PaymentController::class);
@@ -54,6 +56,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         })->name('dashboard');
         Route::resource('admins', AdminController::class);
         Route::resource('packages', AdminPackageController::class)->names('packages');
+        Route::resource('bookings', AdminBookingController::class)->names('bookings')->only(['index', 'show', 'edit', 'update']);
+        Route::post('bookings/{booking}/cancel', [AdminBookingController::class, 'cancel'])->name('bookings.cancel');
+        Route::resource('invoices', AdminInvoiceController::class)->only(['index', 'show']);
     });
 
 });
