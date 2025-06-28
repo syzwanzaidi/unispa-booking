@@ -28,7 +28,7 @@ class BookingInvoiceSeeder extends Seeder
             return;
         }
 
-        $paymentMethods = ['Cash', 'Online'];
+        $paymentMethods = ['Cash', 'Online Banking', 'Card'];
         $bookingStatuses = ['Pending', 'Confirmed', 'Completed', 'Cancelled'];
 
         $startDate = Carbon::now()->subMonths(8);

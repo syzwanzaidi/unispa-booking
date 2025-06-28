@@ -9,17 +9,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Payment extends Model
 {
     use HasFactory;
+
     protected $primaryKey = 'payment_id';
     public $incrementing = true;
     protected $keyType = 'int';
+
+    public $timestamps = false;
+
     protected $fillable = [
         'invoice_id',
+        'amount',
         'payment_method',
         'payment_status',
         'payment_date',
     ];
+
     protected $casts = [
-        'payment_date' => 'date',
+        'payment_date' => 'datetime',
+        'amount' => 'decimal:2',
     ];
     public function invoice(): BelongsTo
     {

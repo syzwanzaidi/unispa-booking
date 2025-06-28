@@ -13,6 +13,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\UserProfileController;
 
 // Home Page
 Route::get('/', function () {
@@ -48,6 +49,13 @@ Route::middleware('auth:web')->group(function () { // Apply 'web' guard for this
 
     // User managing their payments
     Route::resource('payments', PaymentController::class);
+
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/edit', [UserProfileController::class, 'edit'])->name('edit');
+        Route::put('/update', [UserProfileController::class, 'update'])->name('update');
+        Route::get('/change-password', [UserProfileController::class, 'showPasswordChangeForm'])->name('change-password');
+        Route::put('/update-password', [UserProfileController::class, 'updatePassword'])->name('update-password');
+    });
 });
 Route::prefix('admin')->name('admin.')->group(function () {
 
