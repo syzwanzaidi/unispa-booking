@@ -8,6 +8,7 @@ use App\Http\Controllers\PackageController;
 use App\Http\Controllers\Admin\AdminPackageController;
 use App\Http\Controllers\Admin\AdminBookingController;
 use App\Http\Controllers\Admin\AdminInvoiceController;
+use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InvoiceController;
@@ -59,6 +60,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('bookings', AdminBookingController::class)->names('bookings')->only(['index', 'show', 'edit', 'update']);
         Route::post('bookings/{booking}/cancel', [AdminBookingController::class, 'cancel'])->name('bookings.cancel');
         Route::resource('invoices', AdminInvoiceController::class)->only(['index', 'show']);
+        Route::prefix('reports')->name('reports.')->group(function () {
+            Route::get('/', [AdminReportController::class, 'index'])->name('index');
+            Route::get('sales/daily', [AdminReportController::class, 'dailySales'])->name('sales.daily');
+            Route::get('sales/monthly', [AdminReportController::class, 'monthlySales'])->name('sales.monthly');
+            Route::get('sales/yearly', [AdminReportController::class, 'yearlySales'])->name('sales.yearly');
+        });
     });
 
 });

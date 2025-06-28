@@ -40,7 +40,7 @@
                                 <a class="nav-link {{ Request::is('admin/bookings*') ? 'active' : '' }}" href="{{ route('admin.bookings.index') }}">View Bookings</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ Request::is('admin/reports*') ? 'active' : '' }}" href="#">Reports</a>
+                                <a class="nav-link {{ Request::is('admin/reports*') ? 'active' : '' }}" href="{{ route('admin.reports.index') }}">Reports</a>
                             </li>
 
                             {{-- Admin Logout --}}

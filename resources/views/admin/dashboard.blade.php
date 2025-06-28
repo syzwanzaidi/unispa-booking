@@ -42,11 +42,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Generate Reports</h5>
                             <p class="card-text">Generate daily, monthly, and yearly operational reports.</p>
-                            <div class="d-flex flex-column">
-                                <a href="#" class="btn btn-info disabled mb-2" title="Implement link to daily report">Daily Report</a>
-                                <a href="#" class="btn btn-info disabled mb-2" title="Implement link to monthly report">Monthly Report</a>
-                                <a href="#" class="btn btn-info disabled" title="Implement link to yearly report">Yearly Report</a>
-                            </div>
+                            <a href="{{ route('admin.reports.index') }}" class="btn btn-info">Go to Reports Dashboard</a> {{-- UPDATED LINK --}}
                         </div>
                     </div>
                 </div>
