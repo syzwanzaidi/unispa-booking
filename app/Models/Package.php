@@ -23,6 +23,10 @@ class Package extends Model
         'capacity',
     ];
 
+    protected $casts = [
+        'package_price' => 'decimal:2',
+    ];
+
     public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class, 'package_id', 'package_id');

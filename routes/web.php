@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PackageController;
+use App\Http\Controllers\Admin\AdminPackageController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InvoiceController;
@@ -39,7 +40,7 @@ Route::middleware('auth:web')->group(function () { // Apply 'web' guard for this
     Route::post('bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 
     // User viewing their own invoices
-    Route::resource('invoices', InvoiceController::class)->only(['show']);
+    Route::resource('invoices', App\Http\Controllers\InvoiceController::class)->only(['index', 'show']);
 
     // User managing their payments
     Route::resource('payments', PaymentController::class);
@@ -52,6 +53,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             return view('admin.dashboard');
         })->name('dashboard');
         Route::resource('admins', AdminController::class);
+        Route::resource('packages', AdminPackageController::class)->names('packages');
     });
 
 });
