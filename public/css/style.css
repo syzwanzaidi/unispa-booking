@@ -259,3 +259,24 @@
         color: #000 !important;
     }
 }
+.offcanvas-backdrop.show {
+    opacity: 0.5;
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1030;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+body {
+    padding-top: 56px;
+    overflow-x: hidden;
+}
+.navbar-nav.ms-auto {
+    margin-left: auto !important;
+}
+.offcanvas-backdrop.show {
+    opacity: 0.5;
+}

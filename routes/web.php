@@ -20,6 +20,13 @@ use App\Http\Controllers\UserProfileController;
 Route::get('/', function () {
     return view('index');
 })->name('home');
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
 
 // Unified Login/Register routes handled by AuthController
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

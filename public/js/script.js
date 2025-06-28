@@ -89,3 +89,77 @@ document.addEventListener('DOMContentLoaded', function () {
         createAndAppendPackageItem(null);
     }
 });
+document.addEventListener('turbo:load', function() {
+    initializeSidebarPersistence();
+});
+
+// If using Turbo Streams or other dynamic content updates that might include new sidebar elements,
+// you might also listen to turbo:frame-load or turbo:render
+document.addEventListener('turbo:render', function() { // Added turbo:render listener
+    initializeSidebarPersistence();
+});
+
+
+function initializeSidebarPersistence() {
+    var sidebar = document.getElementById('sidebar');
+
+    if (sidebar) {
+        // Ensure offcanvas instance is created/recreated
+        let bsOffcanvas = bootstrap.Offcanvas.getInstance(sidebar);
+        if (!bsOffcanvas) {
+            bsOffcanvas = new bootstrap.Offcanvas(sidebar, {
+                backdrop: true // Ensure backdrop is enabled for proper toggling
+            });
+        }
+
+        // Add event listener to the toggle button (ensure it's only added once)
+        var sidebarToggleButton = document.querySelector('[data-bs-target="#sidebar"]');
+        if (sidebarToggleButton) {
+            // Remove previous listener to prevent duplicates if initializeSidebarPersistence runs multiple times
+            if (!sidebarToggleButton._sidebarToggleListenerAdded) { // Custom flag to prevent duplicates
+                 sidebarToggleButton.addEventListener('click', function() {
+                    const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);
+                    // Toggle state
+                    if (offcanvasInstance && offcanvasInstance._isShown) {
+                        localStorage.setItem('sidebarState', 'closed');
+                    } else {
+                        localStorage.setItem('sidebarState', 'open');
+                    }
+                    // No need to manually show/hide here, Bootstrap's data-bs-toggle handles it
+                    // The listeners below will catch the actual show/hide events
+                });
+                sidebarToggleButton._sidebarToggleListenerAdded = true; // Mark as added
+            }
+        }
+
+        // On page load (or Turbo navigation), check localStorage and open/close sidebar
+        if (localStorage.getItem('sidebarState') === 'open') {
+            // Only show if it's not already shown to prevent re-opening animation
+            if (!bsOffcanvas._isShown) {
+                bsOffcanvas.show();
+            }
+        } else {
+            // Ensure it starts hidden if state is 'closed' or not set, and hide if it's currently open
+            if (bsOffcanvas._isShown) {
+                 bsOffcanvas.hide();
+            }
+        }
+
+        // Listen for the 'hide' event (when user clicks backdrop or close button)
+        // Ensure this listener is also only added once
+        if (!sidebar._sidebarHideListenerAdded) {
+            sidebar.addEventListener('hide.bs.offcanvas', function () {
+                localStorage.setItem('sidebarState', 'closed');
+            });
+            sidebar._sidebarHideListenerAdded = true;
+        }
+
+        // Listen for the 'show' event (when sidebar opens)
+        if (!sidebar._sidebarShowListenerAdded) {
+            sidebar.addEventListener('show.bs.offcanvas', function () {
+                localStorage.setItem('sidebarState', 'open');
+            });
+            sidebar._sidebarShowListenerAdded = true;
+        }
+    }
+}

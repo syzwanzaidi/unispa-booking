@@ -17,8 +17,8 @@
 
 <body>
     @include('partials.header')
+    @include('partials.sidebar')
     <div class="container py-4">
-        <!-- Page content goes here -->
         @yield('content')
     </div>
     @include('partials.footer')
