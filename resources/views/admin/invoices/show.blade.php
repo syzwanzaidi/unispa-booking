@@ -98,6 +98,7 @@
 
         <div class="text-center mt-4">
             <a href="{{ route('admin.bookings.index') }}" class="btn btn-secondary me-2">Back to Bookings</a>
+             <button class="btn btn-success" onclick="window.print()">Download/Print Invoice</button>
         </div>
     </div>
 </div>

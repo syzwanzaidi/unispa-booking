@@ -1,106 +1,111 @@
 @extends('layout.layout')
 
 @section('content')
-<div class="container mt-5 mb-5 print-area">
-    <div class="card p-4 shadow-sm">
-        <div class="row mb-4">
-            <div class="col-6">
-                <h1 class="mb-0 text-primary">INVOICE</h1>
-                <p class="text-muted fs-5">#{{ $invoice->invoice_number }}</p>
-            </div>
-            <div class="col-6 text-end">
-                {{-- <img src="" alt="UniSPA Logo" style="max-height: 80px;"> --}}
-                <h4 class="mb-0">UniSPA Booking System</h4>
-                <address class="mb-0">
-                    Tingkat 3 UNISPA, Universiti Teknologi MARA (UiTM) Shah Alam,<br>
-                    UiTM-MTDC Technopreneur Centre, 40450 Shah Alam,<br>
-                    Selangor, Malaysia<br>
-                    Email: contact@unispabooking.com<br>
-                    Phone: 011-1303 7796
-                </address>
-            </div>
-        </div>
+<div class="container mt-5">
+    @isset($invoices)
+        <h1 class="mb-4">My Invoices</h1>
 
-        <hr class="my-4">
-
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <strong>Bill To:</strong><br>
-                <strong>{{ $booking->user->name }}</strong><br>
-                {{ $booking->user->email }}<br>
-                @if($booking->user->phone_no){{ $booking->user->phone_no }}@endif
+        @if ($invoices->isEmpty())
+            <div class="alert alert-info">
+                You currently have no invoices.
             </div>
-            <div class="col-md-6 text-end">
-                <strong>Invoice Date:</strong> {{ \Carbon\Carbon::parse($invoice->generated_at)->format('M d, Y') }}<br>
-                <strong>Booking Date:</strong> {{ \Carbon\Carbon::parse($booking->booking_date)->format('M d, Y') }}<br>
-                <strong>Payment Method:</strong> {{ $booking->payment_method }}<br>
-                <strong>Payment Status:</strong>
-                <span class="badge {{ $invoice->payment_status === 'Paid' ? 'bg-success' : 'bg-warning text-dark' }}">
-                    {{ $invoice->payment_status }}
-                </span>
-            </div>
-        </div>
-
-        <div class="table-responsive mb-4">
-            <table class="table table-bordered table-hover">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Package Name</th>
-                        <th class="text-center">Pax</th>
-                        <th class="text-center">Time</th>
-                        <th class="text-center">Duration</th>
-                        <th class="text-end">Unit Price</th>
-                        <th class="text-end">Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php $itemNumber = 1; @endphp
-                    @foreach ($booking->bookingItems as $item)
+        @else
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
                         <tr>
-                            <td>{{ $itemNumber++ }}</td>
-                            <td>
-                                {{ $item->package->package_name }}
-                                @if($item->for_whom_name)
-                                    <br><small class="text-muted">For: {{ $item->for_whom_name }}</small>
-                                @endif
-                            </td>
-                            <td class="text-center">{{ $item->item_pax }}</td>
-                            <td class="text-center">{{ \Carbon\Carbon::parse($item->item_start_time)->format('h:i A') }}</td>
-                            <td class="text-center">{{ $item->item_duration_minutes }} Mins</td>
-                            <td class="text-end">RM{{ number_format($item->item_price, 2) }}</td>
-                            <td class="text-end">RM{{ number_format($item->item_price * $item->item_pax, 2) }}</td>
+                            <th>Invoice Number</th>
+                            <th>Booking ID</th>
+                            <th>Total Price</th>
+                            <th>Generated At</th>
+                            <th>Payment Status</th>
+                            <th>Actions</th>
                         </tr>
-                    @endforeach
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th colspan="6" class="text-end">Grand Total:</th>
-                        <th class="text-end">RM{{ number_format($invoice->total_price, 2) }}</th>
-                    </tr>
-                </tfoot>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($invoices as $invoiceItem)
+                            <tr>
+                                <td>{{ $invoiceItem->invoice_number }}</td>
+                                <td>{{ $invoiceItem->booking_id }}</td>
+                                <td>RM {{ number_format($invoiceItem->total_price, 2) }}</td>
+                                <td>{{ $invoiceItem->generated_at ? \Carbon\Carbon::parse($invoiceItem->generated_at)->format('Y-m-d H:i') : 'N/A' }}</td>
+                                <td>
+                                    @if ($invoiceItem->payment_status == 'Paid')
+                                        <span class="badge bg-success">{{ $invoiceItem->payment_status }}</span>
+                                    @elseif ($invoiceItem->payment_status == 'Pending')
+                                        <span class="badge bg-warning">{{ $invoiceItem->payment_status }}</span>
+                                    @else
+                                        <span class="badge bg-secondary">{{ $invoiceItem->payment_status }}</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <a href="{{ route('invoices.show', $invoiceItem->invoice_id) }}" class="btn btn-sm btn-info">View Details</a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    @endisset
+    @isset($invoice)
+        @if (!isset($invoices))
+        <h1 class="mb-4">Invoice #{{ $invoice->invoice_number }}</h1>
+
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                Invoice Details
+            </div>
+            <div class="card-body">
+                <p><strong>Invoice Number:</strong> {{ $invoice->invoice_number }}</p>
+                <p><strong>Invoice Date:</strong> {{ $invoice->generated_at ? \Carbon\Carbon::parse($invoice->generated_at)->format('Y-m-d H:i:s') : 'N/A' }}</p>
+                <p><strong>Total Amount:</strong> RM {{ number_format($invoice->total_price, 2) }}</p>
+                <p><strong>Payment Status:</strong>
+                    @if ($invoice->payment_status == 'Paid')
+                        <span class="badge bg-success">{{ $invoice->payment_status }}</span>
+                    @elseif ($invoice->payment_status == 'Pending')
+                        <span class="badge bg-warning">{{ $invoice->payment_status }}</span>
+                    @else
+                        <span class="badge bg-secondary">{{ $invoice->payment_status }}</span>
+                    @endif
+                </p>
+            </div>
         </div>
 
-        @if($booking->notes)
-            <div class="mb-4">
-                <strong>Notes:</strong><br>
-                <p class="text-muted">{{ $booking->notes }}</p>
+        @if ($invoice->booking)
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    Booking Details (Booking ID: {{ $invoice->booking->booking_id }})
+                </div>
+                <div class="card-body">
+                    <p><strong>Customer:</strong> {{ $invoice->booking->user->name ?? 'N/A' }}</p>
+                    <p><strong>Booking Date:</strong> {{ $invoice->booking->booking_date ? \Carbon\Carbon::parse($invoice->booking->booking_date)->format('Y-m-d') : 'N/A' }}</p>
+                    <p><strong>Booking Status:</strong> {{ $invoice->booking->booking_status }}</p>
+                    <p><strong>Payment Method:</strong> {{ $invoice->booking->payment_method }}</p>
+
+                    @if ($invoice->booking->bookingItems->isNotEmpty())
+                        <h6 class="mt-3">Booked Items:</h6>
+                        <ul class="list-group list-group-flush">
+                            @foreach ($invoice->booking->bookingItems as $item)
+                                <li class="list-group-item">
+                                    {{ $item->package->package_name ?? 'N/A' }} ({{ $item->quantity }} x RM {{ number_format($item->item_price, 2) }})
+                                    {{-- Add item_pax here --}}
+                                    @if ($item->item_pax)
+                                        <br><small>Pax: {{ $item->item_pax }}</small>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </div>
             </div>
         @endif
 
-        <div class="row">
-            <div class="col-12 text-center">
-                <p class="text-muted small">Thank you for your business!</p>
-                <p class="text-muted small">This is a system-generated invoice and may not require a signature.</p>
-            </div>
-        </div>
+        <a href="{{ route('invoices.index') }}" class="btn btn-secondary">Back to All Invoices</a>
+        <button class="btn btn-success" onclick="window.print()">Download/Print Invoice</button>
 
-        <div class="text-center mt-4">
-            <a href="{{ route('bookings.show', $booking->booking_id) }}" class="btn btn-secondary me-2">Back to Booking Details</a>
-            <button class="btn btn-primary" onclick="window.print()">Print Invoice</button>
-            {{-- <a href="{{ route('invoices.downloadPdf', $invoice->invoice_id) }}" class="btn btn-success ms-2">Download PDF</a> --}}
-        </div>
-    </div>
+        @endif
+    @endisset
+
 </div>
 @endsection

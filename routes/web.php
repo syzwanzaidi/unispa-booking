@@ -43,7 +43,8 @@ Route::middleware('auth:web')->group(function () { // Apply 'web' guard for this
     Route::post('bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 
     // User viewing their own invoices
-    Route::resource('invoices', InvoiceController::class)->only(['index', 'show']);
+    Route::get('invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show'); // For single invoice view
+    Route::get('invoices', [InvoiceController::class, 'show'])->name('invoices.index'); // For list of invoices
 
     // User managing their payments
     Route::resource('payments', PaymentController::class);

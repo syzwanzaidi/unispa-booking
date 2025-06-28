@@ -67,7 +67,11 @@
         @else
             <button type="button" class="btn btn-warning" disabled>Cannot Cancel ({{ $booking->booking_status }})</button>
         @endif
-        <a href="{{ route('invoices.show', $booking->booking_id) }}" class="btn btn-info ms-2">View Invoice</a>
+        @if ($booking->invoice)
+            <a href="{{ route('invoices.show', $booking->invoice->invoice_id) }}" class="btn btn-sm btn-info mt-1">View Invoice</a>
+        @else
+            <span class="badge bg-secondary">Invoice Pending</span>
+        @endif
     </div>
 </div>
 @endsection

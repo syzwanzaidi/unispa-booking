@@ -26,7 +26,7 @@ class User extends Authenticatable
         'password' => 'hashed',
         'is_member' => 'boolean',
     ];
-    public function bookings(): HasMany
+    public function bookings()
     {
         return $this->hasMany(Booking::class, 'user_id', 'id');
     }
