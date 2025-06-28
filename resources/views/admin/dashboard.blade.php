@@ -31,7 +31,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Manage Customer Information</h5>
                             <p class="card-text">View, add, update, and delete customer accounts.</p>
-                            <a href="#" class="btn btn-primary disabled mb-2" title="Implement link to customer list/creation">Add/View Customers</a>
+                            <a href="{{ route('admin.customers.index') }}" class="btn btn-primary mb-2" title="Implement link to customer list/creation">Add/View Customers</a>
                         </div>
                     </div>
                 </div>

@@ -28,10 +28,10 @@
                                 <a class="nav-link {{ Request::is('admin/dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Admin Dashboard</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ Request::is('admin/users*') ? 'active' : '' }}" href="#">Manage Customers</a>
+                                <a class="nav-link {{ Request::is('admin/users*') ? 'active' : '' }}" href="{{ route('admin.customers.index') }}">Manage Customers</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ Request::is('admin/packages*') ? 'active' : '' }}" href="{{ route('admin.packages.index') }}">Manage Packages</a> {{-- FIXED THIS LINE --}}
+                                <a class="nav-link {{ Request::is('admin/packages*') ? 'active' : '' }}" href="{{ route('admin.packages.index') }}">Manage Packages</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ Request::is('admin/bookings*') ? 'active' : '' }}" href="{{ route('admin.bookings.index') }}">View Bookings</a>

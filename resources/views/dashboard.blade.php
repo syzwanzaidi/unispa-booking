@@ -56,11 +56,11 @@
 
                 {{-- NEW: Manage Account Button --}}
                 <div class="col-md-4 mb-3">
-                    <div class="card bg-info text-white h-100">
+                    <div class="card bg-light h-100">
                         <div class="card-body">
                             <h5 class="card-title">Manage My Account</h5>
                             <p class="card-text">Update your personal information and password.</p>
-                            <a href="{{ route('profile.edit') }}" class="btn btn-light">Manage Account</a>
+                            <a href="{{ route('profile.edit') }}" class="btn btn-primary">Manage Account</a>
                         </div>
                     </div>
                 </div>
