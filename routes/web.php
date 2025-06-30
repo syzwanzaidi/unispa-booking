@@ -15,6 +15,9 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserProfileController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+
 
 // Home Page
 Route::get('/', function () {
@@ -40,8 +43,7 @@ Route::resource('packages', PackageController::class)->only(['index', 'show']);
 // This ensures the logout route is accessible to both regular users and admins
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::middleware('auth:web')->group(function () { // Apply 'web' guard for this group
-    // User Dashboard
+Route::middleware(['auth:web', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Packages management (if users can manage, otherwise move to admin group)
@@ -65,6 +67,7 @@ Route::middleware('auth:web')->group(function () { // Apply 'web' guard for this
         Route::put('/update-password', [UserProfileController::class, 'updatePassword'])->name('update-password');
     });
 });
+
 Route::prefix('admin')->name('admin.')->group(function () {
 
     // Admin-specific routes protected by the 'admin' guard
@@ -87,3 +90,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 
 });
+
+    Route::get('/email/verify', function () {
+        return view('auth.verify-email');
+    })->middleware('auth')->name('verification.notice');
+
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+        return redirect('/dashboard');
+    })->middleware(['auth', 'signed'])->name('verification.verify');
+
+    Route::post('/email/verification-notification', function (Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('message', 'Verification link sent!');
+    })->middleware(['auth', 'throttle:6,1'])->name('verification.send');

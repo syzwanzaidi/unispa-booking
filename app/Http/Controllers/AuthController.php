@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -52,6 +53,8 @@ class AuthController extends Controller
         }
         return view('auth.register');
     }
+
+    //registration with verification
     public function register(Request $request)
     {
         $request->validate([
@@ -62,16 +65,35 @@ class AuthController extends Controller
             'phone_no' => 'nullable|string|max:20',
         ]);
 
-        User::create([
+        $email = $request->email;
+
+        //Check if email is UiTM community
+        $uitmDomains = ['@uitm.edu.my', '@student.uitm.edu.my', '@staf.uitm.edu.my'];
+        $isMember = 0;
+
+        foreach ($uitmDomains as $domain) {
+            if (str_ends_with($email, $domain)) {
+                $isMember = 1;
+                break;
+            }
+        }
+
+        //Create the user
+        $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => $email,
             'password' => Hash::make($request->password),
             'gender' => $request->gender,
             'phone_no' => $request->phone_no,
+            'is_member' => $isMember,
         ]);
 
-        return redirect()->route('login')->with('success', 'Registration successful! Please login.');
+        //Send email verification link
+        event(new Registered($user));
+
+        return redirect()->route('login')->with('success', 'Registration successful! Please verify your email before logging in.');
     }
+
     public function logout(Request $request)
     {
         if (Auth::guard('web')->check()) {
