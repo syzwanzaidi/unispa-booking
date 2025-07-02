@@ -5,13 +5,19 @@
                 <i class="fas fa-bars"></i>
             </button>
 
-            {{-- LOGO / BRAND NAME --}}
-            @if (Auth::guard('admin')->check())
-                <a class="navbar-brand me-auto" href="{{ url('/') }}">UniSPA Admin Panel</a>
+           @if (Auth::guard('admin')->check())
+                <a class="navbar-brand me-auto" href="{{ url('/') }}">
+                    <img src="{{ asset('img/logo-unispa.png') }}" alt="UniSPA Admin Logo" style="height: 50px;">
+                    Admin Panel
+                </a>
             @elseif (Auth::guard('web')->check())
-                <a class="navbar-brand me-auto" href="{{ url('/') }}">UniSPA</a>
+                <a class="navbar-brand me-auto" href="{{ url('/') }}">
+                    <img src="{{ asset('img/logo-unispa.png') }}" alt="UniSPA Logo" style="height: 50px;">
+                </a>
             @else
-                <a class="navbar-brand me-auto" href="{{ url('/') }}">UniSPA</a>
+                <a class="navbar-brand me-auto" href="{{ url('/') }}">
+                    <img src="{{ asset('img/logo-unispa.png') }}" alt="UniSPA Logo" style="height: 50px;">
+                </a>
             @endif
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>

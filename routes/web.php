@@ -31,6 +31,14 @@ Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
 
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
+
 // Unified Login/Register routes handled by AuthController
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
