@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
-class PaymentController extends Controller
+class ApiPaymentController extends Controller
 {
     public function index()
     {

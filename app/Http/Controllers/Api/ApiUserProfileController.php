@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
-class UserProfileController extends Controller
+class ApiUserProfileController extends Controller
 {
     public function __construct()
     {

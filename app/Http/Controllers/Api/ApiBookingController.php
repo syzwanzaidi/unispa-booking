@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Api\InvoiceController;
 
-class BookingController extends Controller
+class ApiBookingController extends Controller
 {
     private function generateTimeSlots($intervalMinutes = 30, $startHour = 10, $endHour = 19)
     {
@@ -128,7 +128,7 @@ class BookingController extends Controller
                 ]);
             }
 
-            $invoiceController = new InvoiceController();
+            $invoiceController = new ApiInvoiceController();
             $invoice = $invoiceController->generateInvoiceForBooking($booking->booking_id);
 
             if (!$invoice) {

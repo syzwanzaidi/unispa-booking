@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Package;
 use Illuminate\Http\Request;
 
-class PackageController extends Controller
+class ApiPackageController extends Controller
 {
     public function index()
     {
