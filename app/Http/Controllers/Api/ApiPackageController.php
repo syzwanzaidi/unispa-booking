@@ -8,6 +8,46 @@ use Illuminate\Http\Request;
 
 class ApiPackageController extends Controller
 {
+    // ---Web Content uses index() inside PackageController
+    // public function index()
+    // {
+    //     $allPackages = Package::all();
+
+    //     $categorizedAndGroupedPackages = $allPackages
+    //         ->groupBy('category')
+    //         ->map(function ($categoryPackages) {
+    //             return $categoryPackages->groupBy('package_name')->map(function ($namedPackages) {
+    //                 $mainPackageInfo = $namedPackages->first();
+    //                 $options = $namedPackages->map(function ($package) {
+    //                     return (object) [
+    //                         'package_id' => $package->package_id,
+    //                         'duration' => $package->duration,
+    //                         'package_price' => $package->package_price,
+    //                         'capacity' => $package->capacity,
+    //                     ];
+    //                 })
+    //                 ->sortBy(function($option) {
+    //                     if (str_contains($option->duration, 'Minutes')) {
+    //                         return (int) str_replace(' Minutes', '', $option->duration);
+    //                     }
+    //                     if (str_contains($option->duration, 'N/A')) {
+    //                         return 9999;
+    //                     }
+    //                     return 0;
+    //                 })
+    //                 ->values();
+
+    //                 return (object) [
+    //                     'package_name' => $mainPackageInfo->package_name,
+    //                     'package_desc' => $mainPackageInfo->package_desc,
+    //                     'options' => $options,
+    //                 ];
+    //             });
+    //         });
+
+    //     return response()->json(['categorizedPackages' => $categorizedAndGroupedPackages]);
+    // }
+
     public function index()
     {
         $allPackages = Package::all();
@@ -18,7 +58,7 @@ class ApiPackageController extends Controller
                 return $categoryPackages->groupBy('package_name')->map(function ($namedPackages) {
                     $mainPackageInfo = $namedPackages->first();
                     $options = $namedPackages->map(function ($package) {
-                        return (object) [
+                        return [
                             'package_id' => $package->package_id,
                             'duration' => $package->duration,
                             'package_price' => $package->package_price,
@@ -26,25 +66,28 @@ class ApiPackageController extends Controller
                         ];
                     })
                     ->sortBy(function($option) {
-                        if (str_contains($option->duration, 'Minutes')) {
-                            return (int) str_replace(' Minutes', '', $option->duration);
+                        if (str_contains($option['duration'], 'Minutes')) {
+                            return (int) str_replace(' Minutes', '', $option['duration']);
                         }
-                        if (str_contains($option->duration, 'N/A')) {
+                        if (str_contains($option['duration'], 'N/A')) {
                             return 9999;
                         }
                         return 0;
                     })
                     ->values();
 
-                    return (object) [
+                    return [
                         'package_name' => $mainPackageInfo->package_name,
                         'package_desc' => $mainPackageInfo->package_desc,
                         'options' => $options,
                     ];
-                });
+                })->values();
             });
 
-        return response()->json(['categorizedPackages' => $categorizedAndGroupedPackages]);
+        return response()->json([
+            'success' => true,
+            'packages' => $categorizedAndGroupedPackages,
+        ]);
     }
 
     public function show(Package $package)
