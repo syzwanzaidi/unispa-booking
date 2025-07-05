@@ -47,6 +47,49 @@ class PackageController extends Controller
             'categorizedPackages' => $categorizedAndGroupedPackages,
         ]);
     }
+
+    public function apiIndex()
+    {
+        $allPackages = Package::all();
+
+        $categorizedAndGroupedPackages = $allPackages
+            ->groupBy('category')
+            ->map(function ($categoryPackages) {
+                return $categoryPackages->groupBy('package_name')->map(function ($namedPackages) {
+                    $mainPackageInfo = $namedPackages->first();
+                    $options = $namedPackages->map(function ($package) {
+                        return [
+                            'package_id' => $package->package_id,
+                            'duration' => $package->duration,
+                            'package_price' => $package->package_price,
+                            'capacity' => $package->capacity,
+                        ];
+                    })
+                    ->sortBy(function($option) {
+                        if (str_contains($option['duration'], 'Minutes')) {
+                            return (int) str_replace(' Minutes', '', $option['duration']);
+                        }
+                        if (str_contains($option['duration'], 'N/A')) {
+                            return 9999;
+                        }
+                        return 0;
+                    })
+                    ->values();
+
+                    return [
+                        'package_name' => $mainPackageInfo->package_name,
+                        'package_desc' => $mainPackageInfo->package_desc,
+                        'options' => $options,
+                    ];
+                })->values();
+            });
+
+        return response()->json([
+            'success' => true,
+            'packages' => $categorizedAndGroupedPackages,
+        ]);
+    }
+
     public function create()
     {
         return view('packages.create'); // Show form to add new package
@@ -96,4 +139,5 @@ class PackageController extends Controller
         $package->delete(); // Delete the package
         return redirect()->route('packages.index')->with('success', 'Package deleted successfully!');
     }
+
 }
