@@ -47,7 +47,21 @@ class InvoiceController extends Controller
             $invoice->load('booking.user', 'booking.bookingItems.package');
             $booking = $invoice->booking; // For convenience if you use $booking in view
 
-            return view('invoices.show', compact('invoice', 'booking'));
+            $discountRate = 0.10;
+            $totalAfterDiscount = $invoice->total_price;
+            $isMember = $booking->user->is_member;
+
+            if ($isMember) {
+                $totalBeforeDiscount = $totalAfterDiscount / (1 - $discountRate);
+                $discountAmount = $totalBeforeDiscount - $totalAfterDiscount;
+            } else {
+                $totalBeforeDiscount = $totalAfterDiscount;
+                $discountAmount = 0;
+            }
+
+
+            return view('invoices.show', compact('invoice', 'booking', 'totalBeforeDiscount', 'discountAmount', 'totalAfterDiscount'));
+
 
         } else {
             // This block handles showing the LIST of all invoices for the user

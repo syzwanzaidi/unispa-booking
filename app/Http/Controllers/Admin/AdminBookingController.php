@@ -49,8 +49,28 @@ class AdminBookingController extends Controller
     public function show(Booking $booking)
     {
         $booking->load('user', 'bookingItems.package');
-        return view('admin.bookings.show', compact('booking'));
+
+        $totalBeforeDiscount = 0;
+
+        foreach ($booking->bookingItems as $item) {
+            $totalBeforeDiscount += $item->item_price * $item->item_pax;
+        }
+
+        $discountAmount = 0;
+        if ($booking->user->is_member) {
+            $discountAmount = $totalBeforeDiscount * 0.10;
+        }
+
+        $totalAfterDiscount = $totalBeforeDiscount - $discountAmount;
+
+        return view('admin.bookings.show', compact(
+            'booking',
+            'totalBeforeDiscount',
+            'discountAmount',
+            'totalAfterDiscount'
+        ));
     }
+    
     public function edit(Booking $booking)
     {
         $booking->load('user', 'bookingItems.package');

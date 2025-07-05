@@ -26,9 +26,15 @@
         <div class="row mb-4">
             <div class="col-md-6">
                 <strong>Bill To:</strong><br>
-                <strong>{{ $invoice->booking->user->name }}</strong><br>
+                <strong>{{ $invoice->booking->user->name }}</strong>
+                @if($invoice->booking->user->is_member)
+                    <span class="badge bg-success ms-2">UiTM Member</span>
+                @endif
+                <br>
                 {{ $invoice->booking->user->email }}<br>
-                @if($invoice->booking->user->phone_no){{ $invoice->booking->user->phone_no }}@endif
+                @if($invoice->booking->user->phone_no)
+                    {{ $invoice->booking->user->phone_no }}
+                @endif
             </div>
             <div class="col-md-6 text-end">
                 <strong>Invoice Date:</strong> {{ \Carbon\Carbon::parse($invoice->generated_at)->format('M d, Y') }}<br>
@@ -75,9 +81,24 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="6" class="text-end">Grand Total:</th>
-                        <th class="text-end">RM{{ number_format($invoice->total_price, 2) }}</th>
+                        <th colspan="6" class="text-end">Total Before Discount:</th>
+                        <th class="text-end">RM{{ number_format($totalBeforeDiscount, 2) }}</th>
                     </tr>
+                    @if ($discountAmount > 0)
+                        <tr>
+                            <th colspan="6" class="text-end">UiTM Member Discount (10%):</th>
+                            <th class="text-end text-danger">-RM{{ number_format($discountAmount, 2) }}</th>
+                        </tr>
+                        <tr>
+                            <th colspan="6" class="text-end">Total After Discount:</th>
+                            <th class="text-end text-success">RM{{ number_format($totalAfterDiscount, 2) }}</th>
+                        </tr>
+                    @else
+                        <tr>
+                            <th colspan="6" class="text-end">Total After Discount:</th>
+                            <th class="text-end">RM{{ number_format($totalBeforeDiscount, 2) }}</th>
+                        </tr>
+                    @endif
                 </tfoot>
             </table>
         </div>

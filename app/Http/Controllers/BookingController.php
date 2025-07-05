@@ -113,7 +113,15 @@ class BookingController extends Controller
                     return back()->with('error', 'Sorry, not enough capacity for ' . $package->package_name . ' at ' . $itemData['item_start_time'] . ' (Item ' . ($index + 1) . '). Please choose a different time or reduce quantity.')
                                  ->withInput();
                 }
-                $totalBookingAmount += ($package->package_price * $itemData['item_pax']);
+
+                $subtotal = $package->package_price * $itemData['item_pax'];
+
+                if (Auth::user()->is_member) {
+                    $subtotal *= 0.9; // Apply 10% discount
+                }
+
+                $totalBookingAmount += $subtotal;
+
             }
             $booking = Booking::create([
                 'user_id' => Auth::id(),
@@ -168,9 +176,25 @@ class BookingController extends Controller
         if ($booking->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
-        $booking->load('bookingItems.package');
-        return view('bookings.show', compact('booking'));
+
+        $booking->load('bookingItems.package', 'user');
+
+        $totalAfterDiscount = $booking->total_amount;
+        $discountRate = 0.1;
+        $isMember = $booking->user->is_member;
+
+        if ($isMember) {
+            $totalBeforeDiscount = $totalAfterDiscount / (1 - $discountRate);
+            $discountAmount = $totalBeforeDiscount - $totalAfterDiscount;
+        } else {
+            $totalBeforeDiscount = $totalAfterDiscount;
+            $discountAmount = 0;
+        }
+
+        return view('bookings.show', compact('booking', 'totalBeforeDiscount', 'discountAmount', 'totalAfterDiscount'));
     }
+
+
 
     public function cancel(Booking $booking)
     {

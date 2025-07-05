@@ -57,9 +57,25 @@
                 Invoice Details
             </div>
             <div class="card-body">
+                <p><strong>Customer:</strong> 
+                    {{ $invoice->booking->user->name ?? 'N/A' }}
+                    @if($invoice->booking->user->is_member)
+                        <span class="badge bg-success ms-2">UiTM Member</span>
+                    @endif
+                </p>
+
                 <p><strong>Invoice Number:</strong> {{ $invoice->invoice_number }}</p>
                 <p><strong>Invoice Date:</strong> {{ $invoice->generated_at ? \Carbon\Carbon::parse($invoice->generated_at)->format('Y-m-d H:i:s') : 'N/A' }}</p>
-                <p><strong>Total Amount:</strong> RM {{ number_format($invoice->total_price, 2) }}</p>
+
+                <p><strong>Total Before Discount:</strong> RM {{ number_format($totalBeforeDiscount, 2) }}</p>
+
+                @if ($discountAmount > 0)
+                    <p><strong>UiTM Member Discount (10%):</strong> -RM {{ number_format($discountAmount, 2) }}</p>
+                    <p><strong>Total After Discount:</strong> <span class="text-success fw-bold">RM {{ number_format($totalAfterDiscount, 2) }}</span></p>
+                @else
+                    <p><strong>Total After Discount:</strong> <span class="text-muted">No discount applied</span></p>
+                @endif
+
                 <p><strong>Payment Status:</strong>
                     @if ($invoice->payment_status == 'Paid')
                         <span class="badge bg-success">{{ $invoice->payment_status }}</span>

@@ -21,7 +21,14 @@
             <p><strong>Booking ID:</strong> {{ $booking->booking_id }}</p>
             <p><strong>Customer:</strong> {{ $booking->user->name }} ({{ $booking->user->email }})</p>
             <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($booking->booking_date)->format('M d, Y') }}</p>
-            <p><strong>Total Amount:</strong> RM{{ number_format($booking->total_amount, 2) }}</p>
+            <p><strong>Total Before Discount:</strong> RM{{ number_format($totalBeforeDiscount, 2) }}</p>
+
+            @if ($discountAmount > 0)
+                <p><strong>UiTM Member Discount (10%):</strong> -RM{{ number_format($discountAmount, 2) }}</p>
+                <p><strong>Total After Discount:</strong> <span class="text-success fw-bold">RM{{ number_format($totalAfterDiscount, 2) }}</span></p>
+            @else
+                <p><strong>Total After Discount:</strong> <span class="text-muted">No discount applied</span></p>
+            @endif
             <p><strong>Status:</strong> <span class="badge bg-{{
                     $booking->booking_status == 'Confirmed' ? 'success' :
                     ($booking->booking_status == 'Pending' ? 'warning text-dark' :

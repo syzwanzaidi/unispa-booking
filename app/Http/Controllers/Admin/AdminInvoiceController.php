@@ -21,10 +21,25 @@ class AdminInvoiceController extends Controller
 
         return view('admin.invoices.index', compact('invoices'));
     }
+    
     public function show(Invoice $invoice)
     {
         $invoice->load('booking.user', 'booking.bookingItems.package');
 
-        return view('admin.invoices.show', compact('invoice'));
+        // Calculate total before discount
+        $totalBeforeDiscount = 0;
+        foreach ($invoice->booking->bookingItems as $item) {
+            $totalBeforeDiscount += $item->item_price * $item->item_pax;
+        }
+
+        // Apply discount if the user is a UiTM member
+        $discountAmount = 0;
+        if ($invoice->booking->user->is_member) {
+            $discountAmount = $totalBeforeDiscount * 0.10;
+        }
+
+        $totalAfterDiscount = $totalBeforeDiscount - $discountAmount;
+
+        return view('admin.invoices.show', compact('invoice', 'totalBeforeDiscount', 'discountAmount', 'totalAfterDiscount'));
     }
 }
