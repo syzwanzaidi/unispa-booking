@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mt-5">
-    <h1 class="mb-4">Create New Booking</h1>
+    <h1 class="mb-4 text-center">Create New Booking</h1>
 
     {{-- Error and Success Messages --}}
     @if (session('error'))
@@ -30,7 +30,7 @@
 
         {{-- Overall Booking Details --}}
         <div class="card mb-4">
-            <div class="card-header">Overall Booking Information</div>
+            <div class="card-header text-center" style="font-family: Arial, sans-serif;">Overall Booking Information</div>
             <div class="card-body">
                 <div class="form-group mb-3">
                     <label for="booking_date">Booking Date</label>
@@ -66,7 +66,7 @@
         </div>
         <div id="packageItemMasterTemplate" style="display:none;">
             <div class="card mb-3 package-item-template">
-                <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-header d-flex justify-content-between align-items-center" style="font-family: Arial, sans-serif;">
                     Package Item <span class="item-number">1</span>
                     <button type="button" class="btn btn-danger btn-sm remove-item">Remove</button>
                 </div>
@@ -116,7 +116,7 @@
         <button type="button" class="btn btn-secondary mb-4" id="addPackageItem">Add Another Package</button>
 
         <div class="card mt-4 mb-4">
-            <div class="card-header">Booking Summary</div>
+            <div class="card-header text-center" style="font-family: Arial, sans-serif;">Booking Summary</div>
             <div class="card-body">
                 <p><strong>Total Before Discount:</strong> RM <span id="totalBeforeDiscountDisplay">0.00</span></p>
                 @if($isMember)
@@ -129,8 +129,10 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary">Submit Booking</button>
-        <a href="{{ url()->previous() }}" class="btn btn-secondary">Cancel</a>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Submit</button>
+                <a href="{{ url()->previous() }}" class="btn btn-danger ms-2">Cancel</a>
+        </div>
     </form>
 </div>
 <script>

@@ -45,7 +45,9 @@
                         <label for="message" class="form-label">Your Message</label>
                         <textarea class="form-control" id="message" rows="5" placeholder="Type your message here..." required></textarea>
                     </div>
+                    <div class="text-center">
                     <button type="submit" class="btn btn-primary">Send Message</button>
+                    </div>
                 </form>
             </div>
         </div>
