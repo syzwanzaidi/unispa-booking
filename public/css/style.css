@@ -193,11 +193,13 @@ body {
 h1 {
     font-family: Arial, sans-serif;
     font-weight: bold;
+    color: black;
 }
 
 h2 {
     font-family: Arial, sans-serif;
     font-weight: bold;
+    color: black;
 }
 
 .row.mt-4 .col-md-6 ul li {
@@ -207,6 +209,7 @@ h2 {
 
 p {
     font-family: Arial, sans-serif;
+    color: black;
 }
 label {
   font-family: Arial, sans-serif;
@@ -222,6 +225,7 @@ label {
 h5 {
     font-family: Arial, sans-serif;
     font-weight: bold;
+    color: black;
 }
 .card-body a.btn {
   display: block;
@@ -230,4 +234,5 @@ h5 {
 }
 li {
   font-family: Arial, sans-serif;
+  color: black;
 }

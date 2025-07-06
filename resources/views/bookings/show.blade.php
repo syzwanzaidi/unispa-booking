@@ -16,7 +16,7 @@
     @endif
 
     <div class="card mb-4">
-        <div class="card-header">Overall Booking Information</div>
+        <div class="card-header text-black">Overall Booking Information</div>
         <div class="card-body">
             <p><strong>Booking ID:</strong> {{ $booking->booking_id }}</p>
             <p><strong>User:</strong> {{ $booking->user->name }}</p>
@@ -28,7 +28,7 @@
                 <p><strong>UiTM Member Discount (10%):</strong> -RM{{ number_format($discountAmount, 2) }}</p>
                 <p><strong>Total After Discount:</strong> <span class="text-success fw-bold">RM{{ number_format($totalAfterDiscount, 2) }}</span></p>
             @else
-                <p><strong>Total After Discount:</strong> <span class="text-muted">No discount applied</span></p>
+                <p><strong>Total After Discount:</strong> <span style="color: red;">No discount applied</span></p>
             @endif
 
             <p><strong>Status:</strong> {{ $booking->booking_status }}</p>
@@ -40,7 +40,7 @@
     </div>
 
     <div class="card mb-4">
-        <div class="card-header">Booked Packages</div>
+        <div class="card-header text-black">Booked Packages</div>
         <div class="card-body">
             @if ($booking->bookingItems->isEmpty())
                 <p>No packages found for this booking.</p>

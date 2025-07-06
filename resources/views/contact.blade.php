@@ -26,24 +26,24 @@
                     <a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 text-black">
                 <h2 class="mb-3">Send Us a Message</h2>
                 <form>
                     <div class="mb-3">
                         <label for="name" class="form-label">Your Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
+                        <input type="text" class="form-control" id="name" placeholder="Enter your name" required style="color: black;">
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Your Email</label>
-                        <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+                        <input type="email" class="form-control" id="email" placeholder="name@example.com" required style="color: black;">
                     </div>
                     <div class="mb-3">
                         <label for="subject" class="form-label">Subject</label>
-                        <input type="text" class="form-control" id="subject" placeholder="Subject of your inquiry">
+                        <input type="text" class="form-control" id="subject" placeholder="Subject of your inquiry" style="color: black;">
                     </div>
                     <div class="mb-3">
                         <label for="message" class="form-label">Your Message</label>
-                        <textarea class="form-control" id="message" rows="5" placeholder="Type your message here..." required></textarea>
+                        <textarea class="form-control" id="message" rows="5" placeholder="Type your message here..." required style="color: black;"></textarea>
                     </div>
                     <div class="text-center">
                     <button type="submit" class="btn btn-primary">Send Message</button>
