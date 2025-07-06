@@ -5,7 +5,8 @@
     <div class="card p-4 shadow-sm">
         <h1 class="mb-4 text-primary">About UniSPA</h1>
 
-        <p class="lead">Welcome to UniSPA, your sanctuary for relaxation and rejuvenation.</p>
+        <p class="lead" style="font-family: Arial, sans-serif; font-weight: bold;">
+        Welcome to UniSPA, your sanctuary for relaxation and rejuvenation.</p>
 
         <p>At UniSPA, we believe in providing a holistic wellness experience that nurtures your body, calms your mind, and uplifts your spirit. Our expert therapists are dedicated to delivering personalized treatments using premium products in a serene and tranquil environment.</p>
 

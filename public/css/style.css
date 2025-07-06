@@ -20,10 +20,11 @@ body {
     display: none !important;
 }
 .site-footer {
-  background-color: #26272b;
-  color: #737373;
+  background-color: #500e0e;
+  color: #ffffff; /* change text to white for contrast */
   font-size: 15px;
   line-height: 24px;
+  font-family: Arial, sans-serif;
 }
 .site-footer hr {
   border-top-color: #bbb;
@@ -71,7 +72,7 @@ body {
   font-size: 18px;
   color: #fff;
   text-align: center;
-  background-color: #33353d;
+  background-color: #3d3333;
   transition: all 0.2s linear;
 }
 .site-footer .social-icons a:hover {
@@ -169,7 +170,7 @@ body {
     .badge.bg-success { border-color: #198754 !important; color: #198754 !important; }
     .badge.bg-warning { border-color: #ffc107 !important; color: #ffc107 !important; }
     .badge.bg-danger { border-color: #dc3545 !important; color: #dc3545 !important; }
-    .badge.bg-secondary { border-color: #6c757d !important; color: #6c757d !important; }
+    .badge.bg-secondary { border-color: #7d6c6c !important; color: #6c757d !important; }
     a {
         text-decoration: none !important;
         color: #000 !important;
@@ -187,4 +188,46 @@ body {
     justify-content: center;
     min-width: 38px;
     height: 38px;
+}
+
+h1 {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+h2 {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.row.mt-4 .col-md-6 ul li {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+p {
+    font-family: Arial, sans-serif;
+}
+label {
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  font-size: 15px;
+}
+.mt-3.text-center {
+  font-family: Arial, sans-serif;
+}
+.btn-primary {
+  font-family: Arial, sans-serif;
+}
+h5 {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+.card-body a.btn {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+}
+li {
+  font-family: Arial, sans-serif;
 }

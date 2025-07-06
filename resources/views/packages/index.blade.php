@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mt-5">
-    <h1 class="mb-4">Our Packages</h1>
+    <h1 class="mb-4 text-center">Our Packages</h1>
 
     @if ($categorizedPackages->isEmpty())
         <div class="alert alert-info">
@@ -16,7 +16,7 @@
                     <div class="col-md-4 mb-4">
                         <div class="card h-100">
                             <div class="card-body">
-                                <h5 class="card-title">{{ $packageGroup->package_name }}</h5>
+                                <h5 class="card-title text-center">{{ $packageGroup->package_name }}</h5>
                                 @if ($packageGroup->package_desc)
                                     <p class="card-text">{{ $packageGroup->package_desc }}</p>
                                 @endif
