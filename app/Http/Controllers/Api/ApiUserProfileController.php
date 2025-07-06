@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -14,10 +15,14 @@ class ApiUserProfileController extends Controller
         $this->middleware('auth:sanctum');
     }
 
-    public function edit()
+    public function show()
     {
         $user = Auth::user();
-        return view('profile.edit', compact('user'));
+
+        return response()->json([
+            'success' => true,
+            'user' => $user,
+        ]);
     }
 
     public function update(Request $request)
@@ -37,18 +42,18 @@ class ApiUserProfileController extends Controller
             'phone_no' => 'required|string|max:20',
         ]);
 
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        $user->gender = $request->input('gender');
-        $user->phone_no = $request->input('phone_no');
-        $user->save();
+        $user->update([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'gender' => $request->input('gender'),
+            'phone_no' => $request->input('phone_no'),
+        ]);
 
-        return redirect()->route('profile.edit')->with('success', 'Profile updated successfully!');
-    }
-
-    public function showPasswordChangeForm()
-    {
-        return view('profile.change-password');
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully!',
+            'user' => $user,
+        ]);
     }
 
     public function updatePassword(Request $request)
@@ -56,18 +61,24 @@ class ApiUserProfileController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'current_password' => ['required', 'string', function ($attribute, $value, $fail) use ($user) {
-                if (!Hash::check($value, $user->password)) {
-                    $fail('The provided password does not match your current password.');
+            'current_password' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) use ($user) {
+                    if (!Hash::check($value, $user->password)) {
+                        $fail('The provided password does not match your current password.');
+                    }
                 }
-            }],
+            ],
             'new_password' => 'required|string|min:8|confirmed',
         ]);
 
         $user->password = Hash::make($request->input('new_password'));
         $user->save();
-        Auth::guard('web')->login($user);
 
-        return redirect()->route('profile.edit')->with('success', 'Password updated successfully!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Password updated successfully!',
+        ]);
     }
 }

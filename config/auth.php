@@ -17,6 +17,15 @@ return [
             'driver' => 'session',
             'provider' => 'admins', // This links to the 'admins' provider defined below
         ],
+        'admin-api' => [
+            'driver' => 'sanctum',
+            'provider' => 'admins',
+        ],
+    ],
+
+    'api' => [
+        'driver' => 'sanctum',
+        'provider' => 'users',
     ],
 
     'providers' => [
