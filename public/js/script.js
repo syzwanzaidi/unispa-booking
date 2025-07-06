@@ -22,9 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const newItem = originalTemplate.cloneNode(true);
-        newItem.removeAttribute('style'); // Ensures the cloned item is visible
-
-        // Update input names, set values, and REMOVE disabled attribute
+        newItem.removeAttribute('style');
         newItem.querySelectorAll('select, input, textarea').forEach(input => {
             const fieldName = input.name.match(/items\[\d+\]\[(.*)\]/)?.[1];
             if (fieldName) {
@@ -35,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (input.tagName === 'SELECT' && input.querySelector('option[value=""]')) {
                     input.value = '';
                 }
-                input.removeAttribute('disabled'); // <--- ADD THIS LINE: Make the input active
+                input.removeAttribute('disabled');
             }
         });
 
@@ -76,8 +74,6 @@ document.addEventListener('DOMContentLoaded', function () {
     addPackageItemButton.addEventListener('click', function() {
         createAndAppendPackageItem(null);
     });
-
-    // --- Initial form rendering logic on page load ---
     packageItemsContainer.innerHTML = '';
     nextItemIndex = -1;
 
@@ -92,10 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('turbo:load', function() {
     initializeSidebarPersistence();
 });
-
-// If using Turbo Streams or other dynamic content updates that might include new sidebar elements,
-// you might also listen to turbo:frame-load or turbo:render
-document.addEventListener('turbo:render', function() { // Added turbo:render listener
+document.addEventListener('turbo:render', function() {
     initializeSidebarPersistence();
 });
 
@@ -104,57 +97,41 @@ function initializeSidebarPersistence() {
     var sidebar = document.getElementById('sidebar');
 
     if (sidebar) {
-        // Ensure offcanvas instance is created/recreated
         let bsOffcanvas = bootstrap.Offcanvas.getInstance(sidebar);
         if (!bsOffcanvas) {
             bsOffcanvas = new bootstrap.Offcanvas(sidebar, {
-                backdrop: true // Ensure backdrop is enabled for proper toggling
+                backdrop: true
             });
         }
-
-        // Add event listener to the toggle button (ensure it's only added once)
         var sidebarToggleButton = document.querySelector('[data-bs-target="#sidebar"]');
         if (sidebarToggleButton) {
-            // Remove previous listener to prevent duplicates if initializeSidebarPersistence runs multiple times
-            if (!sidebarToggleButton._sidebarToggleListenerAdded) { // Custom flag to prevent duplicates
+            if (!sidebarToggleButton._sidebarToggleListenerAdded) {
                  sidebarToggleButton.addEventListener('click', function() {
                     const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidebar);
-                    // Toggle state
                     if (offcanvasInstance && offcanvasInstance._isShown) {
                         localStorage.setItem('sidebarState', 'closed');
                     } else {
                         localStorage.setItem('sidebarState', 'open');
                     }
-                    // No need to manually show/hide here, Bootstrap's data-bs-toggle handles it
-                    // The listeners below will catch the actual show/hide events
                 });
-                sidebarToggleButton._sidebarToggleListenerAdded = true; // Mark as added
+                sidebarToggleButton._sidebarToggleListenerAdded = true;
             }
         }
-
-        // On page load (or Turbo navigation), check localStorage and open/close sidebar
         if (localStorage.getItem('sidebarState') === 'open') {
-            // Only show if it's not already shown to prevent re-opening animation
             if (!bsOffcanvas._isShown) {
                 bsOffcanvas.show();
             }
         } else {
-            // Ensure it starts hidden if state is 'closed' or not set, and hide if it's currently open
             if (bsOffcanvas._isShown) {
                  bsOffcanvas.hide();
             }
         }
-
-        // Listen for the 'hide' event (when user clicks backdrop or close button)
-        // Ensure this listener is also only added once
         if (!sidebar._sidebarHideListenerAdded) {
             sidebar.addEventListener('hide.bs.offcanvas', function () {
                 localStorage.setItem('sidebarState', 'closed');
             });
             sidebar._sidebarHideListenerAdded = true;
         }
-
-        // Listen for the 'show' event (when sidebar opens)
         if (!sidebar._sidebarShowListenerAdded) {
             sidebar.addEventListener('show.bs.offcanvas', function () {
                 localStorage.setItem('sidebarState', 'open');
@@ -163,3 +140,94 @@ function initializeSidebarPersistence() {
         }
     }
 }
+  document.addEventListener('DOMContentLoaded', function () {
+        const packageItemMasterTemplate = document.getElementById('packageItemMasterTemplate');
+        const packageItemsContainer = document.getElementById('packageItemsContainer');
+        const addPackageItemButton = document.getElementById('addPackageItem');
+
+        const totalBeforeDiscountDisplay = document.getElementById('totalBeforeDiscountDisplay');
+        const discountAmountDisplay = document.getElementById('discountAmountDisplay');
+        const totalAfterDiscountDisplay = document.getElementById('totalAfterDiscountDisplay');
+
+        let itemCounter = 0;
+        function createPackageItem(initialData = null) {
+            const newItem = packageItemMasterTemplate.cloneNode(true);
+            newItem.style.display = 'block';
+            newItem.id = `packageItem_${itemCounter}`;
+            newItem.querySelector('.item-number').textContent = itemCounter + 1;
+            newItem.querySelectorAll('[name*="items[0]"]').forEach(input => {
+                input.name = input.name.replace('items[0]', `items[${itemCounter}]`);
+                input.id = input.id ? input.id.replace('_0', `_${itemCounter}`) : '';
+                input.disabled = false;
+            });
+            if (initialData) {
+                if (initialData.package_id) newItem.querySelector('.package-select').value = initialData.package_id;
+                if (initialData.item_pax) newItem.querySelector('.pax-input').value = initialData.item_pax;
+                if (initialData.item_start_time) newItem.querySelector('.time-slot-select').value = initialData.item_start_time;
+                if (initialData.for_whom_name) newItem.querySelector('.for-whom-input').value = initialData.for_whom_name;
+            } else if (window.selectedInitialPackageId && itemCounter === 0) {
+                newItem.querySelector('.package-select').value = window.selectedInitialPackageId;
+            }
+            newItem.querySelector('.package-select').addEventListener('change', calculateAndDisplayTotals);
+            newItem.querySelector('.pax-input').addEventListener('input', calculateAndDisplayTotals);
+            newItem.querySelector('.remove-item').addEventListener('click', function() {
+                newItem.remove();
+                reindexItems();
+                calculateAndDisplayTotals();
+            });
+
+            packageItemsContainer.appendChild(newItem);
+            itemCounter++;
+        }
+        function reindexItems() {
+            let currentItemIndex = 0;
+            packageItemsContainer.querySelectorAll('.package-item-template').forEach((itemCard, index) => {
+                itemCard.id = `packageItem_${currentItemIndex}`;
+                itemCard.querySelector('.item-number').textContent = currentItemIndex + 1;
+                itemCard.querySelectorAll('[name*="items["]').forEach(input => {
+                    input.name = input.name.replace(/items\[\d+\]/, `items[${currentItemIndex}]`);
+                });
+                currentItemIndex++;
+            });
+            itemCounter = currentItemIndex;
+        }
+
+
+        function calculateAndDisplayTotals() {
+            let totalBeforeDiscount = 0;
+
+            packageItemsContainer.querySelectorAll('.package-item-template').forEach(itemCard => {
+                const packageSelect = itemCard.querySelector('.package-select');
+                const paxInput = itemCard.querySelector('.pax-input');
+
+                const packageId = packageSelect.value;
+                const pax = parseInt(paxInput.value) || 0;
+
+                if (packageId && window.allPackages[packageId]) {
+                    const packagePrice = parseFloat(window.allPackages[packageId].package_price);
+                    totalBeforeDiscount += (packagePrice * pax);
+                }
+            });
+
+            let discountAmount = 0;
+            if (window.isMember) {
+                discountAmount = totalBeforeDiscount * 0.10;
+            }
+
+            const totalAfterDiscount = totalBeforeDiscount - discountAmount;
+
+            totalBeforeDiscountDisplay.textContent = totalBeforeDiscount.toFixed(2);
+            discountAmountDisplay.textContent = discountAmount.toFixed(2);
+            totalAfterDiscountDisplay.textContent = totalAfterDiscount.toFixed(2);
+        }
+        if (window.oldBookingItems.length > 0) {
+            window.oldBookingItems.forEach(item => createPackageItem(item));
+        } else {
+            createPackageItem();
+        }
+        addPackageItemButton.addEventListener('click', function () {
+            createPackageItem();
+            calculateAndDisplayTotals();
+        });
+        calculateAndDisplayTotals();
+    });

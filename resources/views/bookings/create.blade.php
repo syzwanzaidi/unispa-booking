@@ -64,7 +64,6 @@
                 </div>
             </div>
         </div>
-        {{-- MASTER TEMPLATE FOR CLONING (MOVED AND HIDDEN) --}}
         <div id="packageItemMasterTemplate" style="display:none;">
             <div class="card mb-3 package-item-template">
                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -110,23 +109,34 @@
                 </div>
             </div>
         </div>
-        {{-- END MASTER TEMPLATE --}}
+
         <div id="packageItemsContainer">
         </div>
 
         <button type="button" class="btn btn-secondary mb-4" id="addPackageItem">Add Another Package</button>
 
+        <div class="card mt-4 mb-4">
+            <div class="card-header">Booking Summary</div>
+            <div class="card-body">
+                <p><strong>Total Before Discount:</strong> RM <span id="totalBeforeDiscountDisplay">0.00</span></p>
+                @if($isMember)
+                    <p class="text-success"><strong>UiTM Member Discount (10%):</strong> -RM <span id="discountAmountDisplay">0.00</span></p>
+                    <p><strong>Total After Discount:</strong> <span class="text-success fw-bold">RM <span id="totalAfterDiscountDisplay">0.00</span></span></p>
+                @else
+                    <p class="text-muted">No discount applied</p>
+                    <p><strong>Total (No Discount):</strong> <span class="fw-bold">RM <span id="totalAfterDiscountDisplay">0.00</span></span></p>
+                @endif
+            </div>
+        </div>
+
         <button type="submit" class="btn btn-primary">Submit Booking</button>
         <a href="{{ url()->previous() }}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
-
-{{-- Pass necessary data to JavaScript using global variables --}}
 <script>
     window.oldBookingItems = @json(old('items') ?? []);
-    window.allPackages = @json($packages);
+    window.allPackages = @json($packages->keyBy('package_id'));
     window.allTimeSlots = @json($timeSlots);
     window.selectedInitialPackageId = @json($selectedPackageId);
+    window.isMember = @json($isMember);
 </script>
-
-@endsection

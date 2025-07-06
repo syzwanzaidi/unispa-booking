@@ -51,8 +51,9 @@ class BookingController extends Controller
         $selectedPackageId = $request->query('package_id');
 
         $timeSlots = $this->generateTimeSlots(30, 10, 19);
+        $isMember = Auth::user()->is_member ?? false;
 
-        return view('bookings.create', compact('users', 'packages', 'selectedPackageId', 'timeSlots'));
+        return view('bookings.create', compact('users', 'packages', 'selectedPackageId', 'timeSlots', 'isMember'));
     }
 
     public function store(Request $request)
