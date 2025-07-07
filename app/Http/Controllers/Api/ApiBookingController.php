@@ -31,16 +31,21 @@ class ApiBookingController extends Controller
     public function index()
     {
         $bookings = Booking::where('user_id', Auth::id())
-                            ->with('bookingItems.package')
-                            ->orderBy('booking_date', 'desc')
-                            ->orderBy('created_at', 'desc')
-                            ->get();
+            ->with('bookingItems.package')
+            ->orderBy('booking_date', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return response()->json(['bookings' => $bookings]);
     }
 
     public function store(Request $request)
     {
+        Log::info('===> [ApiBookingController@store] called');
+        Log::info('===> [ApiBookingController@store] Request:', $request->all());
+        Log::info('===> [ApiBookingController@store] Auth ID:', ['id' => Auth::id()]);
+        
+
         $request->validate([
             'booking_date' => 'required|date|after_or_equal:today',
             'payment_method' => 'required|string',
@@ -77,9 +82,9 @@ class ApiBookingController extends Controller
                 $bookedPaxAtOverlap = 0;
 
                 $existingBookingItems = BookingItem::whereHas('booking', function ($query) use ($bookingDate) {
-                        $query->where('booking_date', $bookingDate)
-                              ->where('booking_status', '!=', 'Cancelled');
-                    })
+                    $query->where('booking_date', $bookingDate)
+                        ->where('booking_status', '!=', 'Cancelled');
+                })
                     ->where('package_id', $package->package_id)
                     ->get();
 
@@ -138,6 +143,9 @@ class ApiBookingController extends Controller
             }
 
             DB::commit();
+            Log::info('=== TRANSACTION COMMITTED');
+
+            Log::info('=== AFTER SAVE', ['booking' => $booking]);
 
             $booking->load('bookingItems.package');
 
@@ -224,10 +232,10 @@ class ApiBookingController extends Controller
                 $bookedPaxAtOverlap = 0;
 
                 $existingBookingItems = BookingItem::whereHas('booking', function ($query) use ($bookingDate, $booking) {
-                        $query->where('booking_date', $bookingDate)
-                              ->where('booking_status', '!=', 'Cancelled')
-                              ->where('booking_id', '!=', $booking->booking_id);
-                    })
+                    $query->where('booking_date', $bookingDate)
+                        ->where('booking_status', '!=', 'Cancelled')
+                        ->where('booking_id', '!=', $booking->booking_id);
+                })
                     ->where('package_id', $package->package_id)
                     ->get();
 

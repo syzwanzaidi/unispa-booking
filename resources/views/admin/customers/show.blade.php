@@ -53,7 +53,7 @@
                                     <td>{{ $booking->booking_id }}</td>
                                     <td>{{ $booking->booking_date->format('Y-m-d H:i') }}</td>
                                     <td>{{ $booking->booking_status }}</td>
-                                    <td>RM {{ number_format($booking->total_price, 2) }}</td>
+                                    <td>RM {{ number_format($booking->total_amount, 2) }}</td>
                                     <td>{{ $booking->payment_method }}</td>
                                     <td>{{ $booking->invoice->payment_status ?? 'N/A' }}</td>
                                     <td>
