@@ -16,7 +16,6 @@
 
             <div class="mb-3">
                 <label for="identifier" class="form-label text-black">Email / Username</label>
-                {{-- CHANGE: Name the input 'identifier' --}}
                 <input type="text" class="form-control @error('identifier') is-invalid @enderror" id="identifier" name="identifier" value="{{ old('identifier') }}" required autofocus>
                 @error('identifier')
                     <div class="invalid-feedback">
