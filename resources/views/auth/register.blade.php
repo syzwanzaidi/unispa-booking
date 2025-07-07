@@ -34,8 +34,6 @@
                 <label for="password_confirmation" class="form-label">Confirm Password</label>
                 <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
             </div>
-
-            {{-- NEW: Gender --}}
             <div class="mb-3">
                 <label for="gender" class="form-label">Gender</label>
                 <select class="form-select" id="gender" name="gender">
@@ -45,8 +43,6 @@
                     <option value="Other" {{ old('gender') == 'Other' ? 'selected' : '' }}>Other</option>
                 </select>
             </div>
-
-            {{-- NEW: Phone Number --}}
             <div class="mb-3">
                 <label for="phone_no" class="form-label">Phone Number</label>
                 <input type="text" class="form-control" id="phone_no" name="phone_no" value="{{ old('phone_no') }}">
