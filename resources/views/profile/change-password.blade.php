@@ -24,7 +24,7 @@
         <div class="card-header bg-warning text-dark">
             Update Password
         </div>
-        <div class="card-body">
+        <div class="card-body text-black">
             <form action="{{ route('profile.update-password') }}" method="POST">
                 @csrf
                 @method('PUT') {{-- Use PUT method for update --}}
@@ -44,13 +44,13 @@
                     <input type="password" class="form-control" id="new_password_confirmation" name="new_password_confirmation" required>
                 </div>
 
-                <button type="submit" class="btn btn-warning">Update Password</button>
+                <button type="submit" class="btn btn-warning text-black">Update Password</button>
             </form>
         </div>
     </div>
 
     <div class="mt-4">
-        <a href="{{ route('profile.edit') }}" class="btn btn-secondary">Back to Profile Settings</a>
+        <a href="{{ route('profile.edit') }}" class="btn btn-secondary text-black">Back to Profile Settings</a>
     </div>
 </div>
 @endsection

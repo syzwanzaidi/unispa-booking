@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-sm-12 col-md-6 mb-4">
         <h6>About UniSPA</h6>
-        <p class="text-justify">UniSPA is your ultimate sanctuary for relaxation and rejuvenation. We are dedicated to providing a holistic wellness experience that nurtures your body, calms your mind, and uplifts your spirit. Our expert therapists offer personalized treatments using premium products in a serene and tranquil environment, ensuring every visit leaves you feeling refreshed and revitalized. Discover peace and harmony with UniSPA.</p>
+        <p class="text-justify text-white">UniSPA is your ultimate sanctuary for relaxation and rejuvenation. We are dedicated to providing a holistic wellness experience that nurtures your body, calms your mind, and uplifts your spirit. Our expert therapists offer personalized treatments using premium products in a serene and tranquil environment, ensuring every visit leaves you feeling refreshed and revitalized. Discover peace and harmony with UniSPA.</p>
       </div>
 
       <div class="col-xs-6 col-md-3 mb-4">

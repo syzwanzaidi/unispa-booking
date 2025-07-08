@@ -21,7 +21,7 @@
     @endif
 
     <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-primary text-black">
             Update Profile Information
         </div>
         <div class="card-body">
@@ -30,18 +30,18 @@
                 @method('PUT') {{-- Use PUT method for update --}}
 
                 <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $user->name) }}" required>
+                    <label for="name" class="form-label text-black">Name</label>
+                    <input type="text" class="form-control text-black" id="name" name="name" value="{{ old('name', $user->name) }}" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $user->email) }}" required>
+                    <label for="email" class="form-label text-black">Email address</label>
+                    <input type="email" class="form-control text-black" id="email" name="email" value="{{ old('email', $user->email) }}" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="gender" class="form-label">Gender</label>
-                    <select class="form-select" id="gender" name="gender" required>
+                    <label for="gender" class="form-label text-black">Gender</label>
+                    <select class="form-select text-black" id="gender" name="gender" required>
                         <option value="">Select Gender</option>
                         <option value="male" @if(old('gender', $user->gender) == 'male') selected @endif>Male</option>
                         <option value="female" @if(old('gender', $user->gender) == 'female') selected @endif>Female</option>
@@ -50,8 +50,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="phone_no" class="form-label">Phone Number</label>
-                    <input type="text" class="form-control" id="phone_no" name="phone_no" value="{{ old('phone_no', $user->phone_no) }}" required>
+                    <label for="phone_no" class="form-label text-black">Phone Number</label>
+                    <input type="text" class="form-control text-black" id="phone_no" name="phone_no" value="{{ old('phone_no', $user->phone_no) }}" required>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Update Profile</button>
@@ -60,17 +60,17 @@
     </div>
 
     <div class="card shadow-sm">
-        <div class="card-header bg-warning text-dark">
+        <div class="card-header bg-warning text-black">
             Change Password
         </div>
         <div class="card-body">
             <p>For security, please use a strong, unique password.</p>
-            <a href="{{ route('profile.change-password') }}" class="btn btn-warning">Change Password</a>
+            <a href="{{ route('profile.change-password') }}" class="btn btn-warning text-black">Change Password</a>
         </div>
     </div>
 
     <div class="mt-4">
-        <a href="{{ route('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+        <a href="{{ route('dashboard') }}" class="btn btn-secondary text-black">Back to Dashboard</a>
     </div>
 </div>
 @endsection
