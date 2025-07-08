@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User; // Import the User model
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -12,12 +12,8 @@ class AdminCustomerController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:admin'); // Ensure only authenticated admins can access
+        $this->middleware('auth:admin');
     }
-
-    /**
-     * Display a listing of all customers.
-     */
     public function index(Request $request)
     {
         $query = User::query();
@@ -33,33 +29,20 @@ class AdminCustomerController extends Controller
         }
 
         // Order by latest registered
-        $customers = $query->orderBy('created_at', 'desc')->paginate(10); // Paginate for large lists
+        $customers = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return view('admin.customers.index', compact('customers'));
     }
-
-    /**
-     * Display the specified customer.
-     */
     public function show(User $customer) // Using route model binding
     {
-        // Eager load relationships if needed, e.g., bookings, invoices for a customer
-        $customer->load('bookings.invoice', 'bookings.bookingItems.package'); // Example of loading customer's related data
+        $customer->load('bookings.invoice', 'bookings.bookingItems.package');
 
         return view('admin.customers.show', compact('customer'));
     }
-
-    /**
-     * Show the form for editing the specified customer.
-     */
     public function edit(User $customer)
     {
         return view('admin.customers.edit', compact('customer'));
     }
-
-    /**
-     * Update the specified customer in storage.
-     */
     public function update(Request $request, User $customer)
     {
         $request->validate([
@@ -69,11 +52,11 @@ class AdminCustomerController extends Controller
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('users')->ignore($customer->id), // Email unique except for current user
+                Rule::unique('users')->ignore($customer->id),
             ],
-            'gender' => 'required|in:male,female,other', // Adjust if your genders are different
+            'gender' => 'required|in:male,female,other',
             'phone_no' => 'required|string|max:20',
-            'password' => 'nullable|string|min:8|confirmed', // Optional password change
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
 
         $customer->name = $request->name;
@@ -89,15 +72,10 @@ class AdminCustomerController extends Controller
 
         return redirect()->route('admin.customers.index')->with('success', 'Customer profile updated successfully!');
     }
-
-    /**
-     * Remove the specified customer from storage.
-     * Use with extreme caution as this will delete all associated data (bookings, invoices, payments)!
-     */
     public function destroy(User $customer)
     {
         try {
-            $customer->delete(); // Due to onDelete('cascade') in migrations, related records might also be deleted
+            $customer->delete();
             return redirect()->route('admin.customers.index')->with('success', 'Customer deleted successfully!');
         } catch (\Exception $e) {
             return redirect()->route('admin.customers.index')->with('error', 'Error deleting customer: ' . $e->getMessage());
